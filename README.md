@@ -1,6 +1,6 @@
 ### Pytorch Adversarial Attacks #
 
-Complete implementation of well-known attacks (PGD, FGSM, R-FGSM etc..). All attacks have an apex(amp) version which you can run your attacks fast and accurately. These attack functions firstly aim for robust attack, in case of well-known phenomenon "gradient masking" gives an error. 
+Complete implementation of well-known attacks (PGD, FGSM, R-FGSM etc..). All attacks have an apex(amp) version which you can run your attacks fast and accurately. We strongly recommend that amp versions should only be used for adversarial training. 
 
 
 ## Module Structure #
