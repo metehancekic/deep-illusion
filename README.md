@@ -1,32 +1,20 @@
 ### Pytorch Adversarial Attacks #
 
-Complete implementation of well-known attacks (PGD, FGSM, R-FGSM etc..). All attacks have apex version which you can run your attacks fast and accurate
+Complete implementation of well-known attacks (PGD, FGSM, R-FGSM etc..). All attacks have an apex(amp) version which you can run your attacks fast and accurately. These attack functions firstly aim for robust attack, in case of well-known phenomenon "gradient masking" gives an error. 
 
 
 ## Module Structure #
 
 ```
-project
+adversary
 │   README.md
-│   cfo_channel_training.py     Training code for all the experiments
-│   cfo_channel_testing.py      Testing code from checkpoints
-│   config_cfo_channel.json     All hyper parameters for the experiment
-│   simulators.py               All simulations (CFO, channel, residuals, etc) as functions
+|   utils.py                        Utility functions
 │
-└───cxnn
-│   │   models.py                   Neural network architectures
-│   │   train.py                    Training function
-│   │   train_network_reim_mag.py   Training function for real and complex networks
-│   │ 
-│   └───complexnn
-│       │   complex-valued neural network implemantation codes
-│       │   ...
-│   
-└───preproc   
-│   │  fading_model.py      Signal processing tools (Fading models, etc)   
-│   │  preproc_wifi         Preprocessing tools (Equalization, etc)
-│
-└───tests
-    │   test_aug_analysis.py        Signal processing tools (Fading models, etc)   
-    │   visualize_offset.py         Preprocessing tools (Equalization, etc)   
+└───gradient_based_attacks
+    │   norm_ball_attacks.py        FGSM, R-FGSM, PGD attack functions
+    │   soft_attacks.py             Soft attack functions
+    │ 
+    └───amp
+        │   norm_ball_attacks.py        Amp versions of FGSM, R-FGSM, PGD attack functions
+        │   soft_attacks.py             Amp versions of  soft attack functions
 ```
