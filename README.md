@@ -6,15 +6,19 @@ Complete implementation of well-known attacks (PGD, FGSM, R-FGSM etc..). All att
 ## Module Structure #
 
 ```
-adversary
+pytorch-adversarial-attacks
 │   README.md
-|   utils.py                        Utility functions
 │
-└───gradient_based_attacks
-    │   norm_ball_attacks.py        FGSM, R-FGSM, PGD attack functions
+└───attacks
+    │   fgsm.py                     Fast Gradient Sign Method
+    │   rfgsm.py                    Random Start + Fast Gradient Sign Method
+    │   pgd.py                      Projected Gradient Descent
     │   soft_attacks.py             Soft attack functions
+    |   utils.py                    Utility functions
     │ 
     └───amp
-        │   norm_ball_attacks.py        Amp versions of FGSM, R-FGSM, PGD attack functions
-        │   soft_attacks.py             Amp versions of  soft attack functions
+        │   fgsm.py                     Mixed Precision (Faster) - Fast Gradient Sign Method
+        │   rfgsm.py                    Mixed Precision (Faster) - Random Start + Fast Gradient Sign Method
+        │   pgd.py                      Mixed Precision (Faster) - Projected Gradient Descent
+        │   soft_attacks.py             Mixed Precision (Faster) - Soft attack functions
 ```
