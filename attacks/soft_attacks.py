@@ -10,13 +10,12 @@ Funcs: soft_attack_single_step
 """
 
 from tqdm import tqdm
-from apex import amp
 
 import torch
 import torchvision
 from torch import nn
 
-from adversary.utils import cross_entropy_one_hot
+from ..utils import cross_entropy_one_hot
 
 
 def soft_attack_single_step(net, x, y_soft_vector, data_params, attack_params, optimizer=None):
