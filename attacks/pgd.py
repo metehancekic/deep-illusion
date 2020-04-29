@@ -33,7 +33,12 @@ def PGD(net, x, y_true, data_params, attack_params, verbose=True):
     perturbs = torch.zeros_like(x)
 
     if verbose and attack_params["num_restarts"] > 1:
-        restarts = tqdm(range(attack_params["num_restarts"]))
+        restarts = tqdm(
+            iterable=range(attack_params["num_restarts"]),
+            unit="restart",
+            leave=True,
+            # bar_format="{percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}{postfix}]"
+            )
     else:
         restarts = range(attack_params["num_restarts"])
 
@@ -51,7 +56,12 @@ def PGD(net, x, y_true, data_params, attack_params, verbose=True):
             perturb = torch.zeros_like(x, dtype=torch.float)
 
         if verbose:
-            iters = tqdm(range(attack_params["num_steps"]))
+            iters = tqdm(
+                iterable=range(attack_params["num_steps"]),
+                unit="step",
+                leave=True,
+                # bar_format="{percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}{postfix}]"
+                )
         else:
             iters = range(attack_params["num_steps"])
 

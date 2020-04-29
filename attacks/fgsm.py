@@ -26,11 +26,12 @@ def FGSM(net, x, y_true, eps, data_params, norm="inf"):
         y_hat = net(x + e).type(torch.cuda.DoubleTensor)
     else:
         y_hat = net(x + e).type(torch.DoubleTensor)
+    # y_hat = net(x + e)
     criterion = nn.CrossEntropyLoss(reduction="none")
     loss = criterion(y_hat, y_true)
     # if loss.min() <= 0:
     #     raise GradientMaskingError("Gradient masking is happening")
-    loss.backward(gradient=torch.ones_like(y_true, dtype=torch.float), retain_graph=True)
+    loss.backward(gradient=torch.ones_like(y_true, dtype=torch.DoubleTensor), retain_graph=True)
     e_grad = e.grad.data
     if norm == "inf":
         perturbation = eps * e_grad.sign()
