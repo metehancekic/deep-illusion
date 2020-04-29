@@ -24,10 +24,9 @@ def FGSM(net, x, y_true, eps, data_params, norm="inf", optimizer=None):
         perturbation : Single step perturbation (Clamped with input limits)
     """
     e = torch.zeros_like(x, requires_grad=True)
-    if x.device.type == "cuda":
-        y_hat = net(x + e).type(torch.cuda.DoubleTensor)
-    else:
-        y_hat = net(x + e).type(torch.DoubleTensor)
+
+    y_hat = net(x + e).type(torch.cuda.DoubleTensor)
+  
     criterion = nn.CrossEntropyLoss(reduction="none")
     loss = criterion(y_hat, y_true)
     # if loss.min() <= 0:
