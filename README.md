@@ -26,7 +26,6 @@ pytorch-adversarial-attacks
 
 Required libraries to be able to use attacks module.
 
-> python                    3.7.7\
 > numpy                     1.16.4\
 > pytorch                   1.4.0\
 > tqdm                      4.31.1\
