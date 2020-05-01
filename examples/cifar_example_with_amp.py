@@ -2,14 +2,15 @@ import sys
 sys.path.append("../")
 
 import time
+
 from models.resnet import ResNet
 
-from attacks import FGSM, RFGSM, PGD
-import attacks
+from attacks.amp import FGSM, RFGSM, PGD
 from attacks.utils import perturbation_properties
 
 from torchvision import datasets, transforms
 
+from apex import amp
 import torch.nn.functional as F
 import torch.nn as nn
 import torch
@@ -41,6 +42,10 @@ test_loader = torch.utils.data.DataLoader(testset,
 
 classes = ['plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
 
+amp_args = dict(opt_level="O2", loss_scale='1.0', verbosity=False)
+if args.opt_level == 'O2':
+    amp_args['master_weights'] = False
+model, optimizer = amp.initialize(model, optimizer, **amp_args)
 
 def show_images(images, labels):
     num_img = len(images)
@@ -123,7 +128,6 @@ attack_params = {
     "random_start": False,
     "num_restarts": 1,
     }
-
 start_time = time.time()
 attack_loss, attack_acc = test_adversarial(model, test_loader,
                                            data_params=data_params,
