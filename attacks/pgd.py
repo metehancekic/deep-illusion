@@ -1,3 +1,8 @@
+"""
+Author: Metehan Cekic
+Projected Gradient Descent
+"""
+
 from tqdm import tqdm
 
 import torch
@@ -28,22 +33,27 @@ def PGD(net, x, y_true, data_params, attack_params, verbose=True):
                 num_restarts : Number of restarts                           (Int)
     Output:
         perturbs : Perturbations for given batch
+
+    Explanation:
+        e = zeros() or e = uniform(-eps,eps)
+        repeat num_steps:
+            e += delta * sign(grad_{x}(net(x)))
     """
 
     perturbs = torch.zeros_like(x)
 
+    # Adding progress bar for random-restarts if verbose = True
     if verbose and attack_params["num_restarts"] > 1:
         restarts = tqdm(
             iterable=range(attack_params["num_restarts"]),
             unit="restart",
-            leave=True,
-            # bar_format="{percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}{postfix}]"
-            )
+            leave=True)
     else:
         restarts = range(attack_params["num_restarts"])
 
     for i in restarts:
 
+        # Randomly initialize perturbation if needed
         if attack_params["random_start"] or attack_params["num_restarts"] > 1:
             if attack_params["norm"] == "inf":
                 perturb = (2 * torch.rand_like(x) - 1) * attack_params["eps"]
@@ -55,27 +65,27 @@ def PGD(net, x, y_true, data_params, attack_params, verbose=True):
         else:
             perturb = torch.zeros_like(x, dtype=torch.float)
 
+        # Adding progress bar for iterations if verbose = True
         if verbose:
             iters = tqdm(
                 iterable=range(attack_params["num_steps"]),
                 unit="step",
-                leave=True,
-                # bar_format="{percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}{postfix}]"
-                )
+                leave=True)
         else:
             iters = range(attack_params["num_steps"])
 
         for _ in iters:
-            perturb += FGSM(net, torch.clamp(x+perturb, data_params["x_min"],
-                                             data_params["x_max"]),
-                            y_true, attack_params["step_size"],
+            perturb += FGSM(net, x+perturb, y_true, attack_params["step_size"],
                             data_params, attack_params["norm"])
+
+            # Clip perturbation if surpassed the norm bounds
             if attack_params["norm"] == "inf":
                 perturb = torch.clamp(perturb, -attack_params["eps"], attack_params["eps"])
             else:
                 perturb = (perturb * attack_params["eps"] /
                            perturb.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1))
 
+        # Use the best perturbations among all restarts which fooled neural network
         if i == 0:
             perturbs = perturb.data
         else:
@@ -85,6 +95,4 @@ def PGD(net, x, y_true, data_params, attack_params, verbose=True):
             fooled_indices = (y_hat != y_true.view_as(y_hat)).nonzero()
             perturbs[fooled_indices] = perturb[fooled_indices].data
 
-    perturbs.data = torch.max(
-        torch.min(perturbs, data_params["x_max"] - x), data_params["x_min"] - x)
     return perturbs
