@@ -6,6 +6,7 @@ from models.resnet import ResNet
 
 from attacks import FGSM, RFGSM, PGD
 import attacks
+from attacks.utils import perturbation_properties
 
 from torchvision import datasets, transforms
 
@@ -65,8 +66,8 @@ labels = [classes[i] for i in labels[:num_img_to_plot]]
 # show_images(images, labels)
 
 model = ResNet().to(device)
-# model.load_state_dict(torch.load("model/holdout.pth"))
-# model.eval()
+model.load_state_dict(torch.load("checkpoints/ResNetMadry.pt"))
+model.eval()
 
 
 def test_adversarial(model, test_loader, data_params, attack_params):

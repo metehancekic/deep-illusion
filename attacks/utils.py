@@ -3,6 +3,7 @@ Auxilary tools
 """
 
 import torch
+import numpy as np
 
 class GradientMaskingError(ValueError):
     """Gradient masking error (false sense of robustness)"""
@@ -37,8 +38,7 @@ def perturbation_properties(clean_data, adversarial_data, epsilon):
 
     print(f"Attack budget: {epsilon}")
 
-    print(f"Percent of images perturbation is added: {100. * \
-        np.count_nonzero(np.max(np.abs(e),axis = 1))/e.shape[0]} %")
+    print(f"Percent of images perturbation is added: {100. * np.count_nonzero(np.max(np.abs(e),axis = 1)) / e.shape[0]} %")
     print(f"L_inf distance: {np.round(np.abs(e).max()*255)}")
     print(f"Avg magnitude: {np.abs(e).mean()*255:.2f}")
 
@@ -46,7 +46,6 @@ def perturbation_properties(clean_data, adversarial_data, epsilon):
 
     num_eps = (((np.abs(e) < epsilon + tol) & (np.abs(e) > epsilon - tol)).sum(axis=1).mean())
 
-    print(f"Percent of pixels with mag=eps: {100*num_eps/(adversarial_data.shape[1] * \
-        adversarial_data.shape[2]*adversarial_data.shape[3])}")
+    print(f"Percent of pixels with mag=eps: {100*num_eps/(adversarial_data.shape[1] * adversarial_data.shape[2]*adversarial_data.shape[3])}")
 
     return e
