@@ -22,6 +22,13 @@ pytorch-adversarial-attacks
         │   pgd.py                      Mixed Precision (Faster) - Projected Gradient Descent
         │   soft_attacks.py             Mixed Precision (Faster) - Soft attack functions
 ```
+## Example Use #
+
+Firstly, make sure that you added the folder path (i.e .../pythorch-adversarial-attacks/) that includes attacks folder into environment variable PYTHONPATH. You can add following code to ~/.bashrc so that permanently add attacks as module.
+```bash
+export PYTHONPATH="${PYTHONPATH}:.../path_to_attacks/"
+```
+Import the adversarial attack functions from attacks folder as following
 
 ```python
 from attacks import PGD, FGSM, RFGSM
