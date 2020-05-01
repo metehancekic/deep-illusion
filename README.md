@@ -24,7 +24,7 @@ pytorch-adversarial-attacks
 ```
 ## Example Use #
 
-Firstly, make sure that you added the folder path (i.e .../pythorch-adversarial-attacks/) that includes attacks folder into environment variable PYTHONPATH. You can add following code to ~/.bashrc so that permanently add attacks as module.
+Firstly, make sure that you added the folder path (i.e .../pythorch-adversarial-attacks/) that includes attacks folder into environment variable PYTHONPATH. You can add following code to ~/.bashrc to permanently add attacks as module or use it on terminal to add attacks to pythonpath temporarily.
 ```bash
 export PYTHONPATH="${PYTHONPATH}:.../path_to_attacks/"
 ```
