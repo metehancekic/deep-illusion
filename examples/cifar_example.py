@@ -1,5 +1,3 @@
-import sys
-sys.path.append("../")
 
 import time
 from models.resnet import ResNet
