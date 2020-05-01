@@ -22,3 +22,8 @@ pytorch-adversarial-attacks
         │   pgd.py                      Mixed Precision (Faster) - Projected Gradient Descent
         │   soft_attacks.py             Mixed Precision (Faster) - Soft attack functions
 ```
+
+```[python]
+def asdasd():
+    pass
+```
