@@ -4,7 +4,7 @@ import time
 from models.resnet import ResNet
 
 from attacks.amp import FGSM, RFGSM, PGD
-from attacks.utils import perturbation_properties
+from attacks.utils import get_perturbation_properties
 
 from torchvision import datasets, transforms
 
@@ -65,7 +65,7 @@ labels = [classes[i] for i in labels[:num_img_to_plot]]
 # show_images(images, labels)
 
 model = ResNet().to(device)
-# model.load_state_dict(torch.load("checkpoints/ResNetMadry.pt"))
+model.load_state_dict(torch.load("checkpoints/ResNet.pt"))
 model.eval()
 
 optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.5)
@@ -103,7 +103,13 @@ def test_adversarial(model, test_loader, data_params, attack_params):
                         verbose=False)
         perturbs = PGD(**pgd_args)
         data_adv = data + perturbs
-        # e = perturbation_properties(data, data_adv, attack_params["eps"])
+        perturbation_properties = get_perturbation_properties(
+            data, data_adv, attack_params["eps"], verbose=False)
+
+        # print(f"Attack budget: {attack_params['eps']}")
+        # print(f"Percent of images perturbation is added: {perturbation_properties['percent_images_attacked']} %")
+        # print(f"L_inf distance: {perturbation_properties['l_norm_distance']}")
+        # print(f"Avg magnitude: {perturbation_properties['average_perturbation']:.2f}")
 
         output = model(data_adv)
 

@@ -4,7 +4,7 @@ from models.resnet import ResNet
 
 from attacks import FGSM, RFGSM, PGD
 import attacks
-from attacks.utils import perturbation_properties
+from attacks.utils import get_perturbation_properties
 
 from torchvision import datasets, transforms
 
@@ -64,7 +64,7 @@ labels = [classes[i] for i in labels[:num_img_to_plot]]
 # show_images(images, labels)
 
 model = ResNet().to(device)
-# model.load_state_dict(torch.load("checkpoints/ResNetMadry.pt"))
+model.load_state_dict(torch.load("checkpoints/ResNet.pt"))
 model.eval()
 
 
@@ -82,7 +82,7 @@ def test_adversarial(model, test_loader, data_params, attack_params):
         iterable=test_loader,
         unit="batch",
         leave=True)
-        
+
     for data, target in test_load:
 
         data, target = data.to(device), target.to(device)
@@ -96,7 +96,8 @@ def test_adversarial(model, test_loader, data_params, attack_params):
                         verbose=False)
         perturbs = PGD(**pgd_args)
         data_adv = data + perturbs
-        # e = perturbation_properties(data, data_adv, attack_params["eps"])
+        perturbation_properties = get_perturbation_properties(
+            data, data_adv, attack_params["eps"], verbose=False)
 
         output = model(data_adv)
 

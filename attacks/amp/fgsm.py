@@ -25,7 +25,7 @@ def FGSM(net, x, y_true, eps, data_params, norm="inf", optimizer=None):
     """
     e = torch.zeros_like(x, requires_grad=True)
 
-    y_hat = net(x + e)
+    y_hat = net(x + e).type(torch.cuda.DoubleTensor)
 
     # Loss computation
     criterion = nn.CrossEntropyLoss(reduction="none")
