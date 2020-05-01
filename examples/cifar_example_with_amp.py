@@ -92,6 +92,8 @@ def test_adversarial(model, test_loader, data_params, attack_params):
         leave=True,
         # bar_format="{percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}{postfix}]"
         )
+    for p in model.parameters():
+        p.requires_grad = False
     for data, target in test_load:
 
         data, target = data.to(device), target.to(device)
@@ -106,7 +108,7 @@ def test_adversarial(model, test_loader, data_params, attack_params):
                         verbose=False)
         perturbs = PGD(**pgd_args)
         data_adv = data + perturbs
-        e = perturbation_properties(data, data_adv, attack_params["eps"])
+        # e = perturbation_properties(data, data_adv, attack_params["eps"])
 
         output = model(data_adv)
 
@@ -116,6 +118,8 @@ def test_adversarial(model, test_loader, data_params, attack_params):
         pred = output.argmax(dim=1, keepdim=True)
         test_correct += pred.eq(target.view_as(pred)).sum().item()
 
+    for p in model.parameters():
+        p.requires_grad = True
     test_size = len(test_loader.dataset)
 
     return test_loss/test_size, test_correct/test_size

@@ -103,7 +103,7 @@ def test_adversarial(model, test_loader, data_params, attack_params):
                         verbose=False)
         perturbs = PGD(**pgd_args)
         data_adv = data + perturbs
-        e = perturbation_properties(data, data_adv, attack_params["eps"])
+        # e = perturbation_properties(data, data_adv, attack_params["eps"])
 
         output = model(data_adv)
 

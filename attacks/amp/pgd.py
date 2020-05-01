@@ -40,7 +40,7 @@ def PGD(net, x, y_true, data_params, attack_params, optimizer, verbose=True):
         repeat num_steps:
             e += delta * sign(grad_{x}(net(x)))
     """
-
+    breakpoint()
     perturbs = torch.zeros_like(x)
 
     # Adding progress bar for random-restarts if verbose = True
