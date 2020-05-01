@@ -41,6 +41,10 @@ def PGD(net, x, y_true, data_params, attack_params, optimizer, verbose=True):
             e += delta * sign(grad_{x}(net(x)))
     """
 
+    # setting parameters.requires_grad = False increases speed
+    for p in net.parameters():
+        p.requires_grad = False
+
     perturbs = torch.zeros_like(x)
 
     # Adding progress bar for random-restarts if verbose = True
@@ -95,5 +99,9 @@ def PGD(net, x, y_true, data_params, attack_params, optimizer, verbose=True):
 
             fooled_indices = (y_hat != y_true.view_as(y_hat)).nonzero()
             perturbs[fooled_indices] = perturb[fooled_indices].data
+
+    # set back to True
+    for p in net.parameters():
+        p.requires_grad = True
 
     return perturbs
