@@ -97,13 +97,13 @@ def test_adversarial(model, test_loader, data_params, attack_params):
                         attack_params=attack_params,
                         verbose=False)
         perturbs = PGD(**pgd_args)
-        data += perturbs
-#         print(perturbs)
+        data_adv = data + perturbs
+        e = perturbation_properties(data, data_adv, attack_params["eps"])
 
-        output = model(data)
+        output = model(data_adv)
 
         cross_ent = nn.CrossEntropyLoss()
-        test_loss += cross_ent(output, target).item() * data.size(0)
+        test_loss += cross_ent(output, target).item() * data_adv.size(0)
 
         pred = output.argmax(dim=1, keepdim=True)
         test_correct += pred.eq(target.view_as(pred)).sum().item()
