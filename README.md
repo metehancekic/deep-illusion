@@ -1,6 +1,6 @@
 ### Pytorch Adversarial Attacks #
 
-Complete implementation of well-known attacks (PGD, FGSM, R-FGSM etc..). All attacks have an apex(amp) version which you can run your attacks fast and accurately. We strongly recommend that amp versions should only be used for adversarial training. 
+Complete implementation of well-known attacks (PGD, FGSM, R-FGSM etc..). All attacks have an apex(amp) version which you can run your attacks fast and accurately. We strongly recommend that amp versions should only be used for adversarial training since it may have gradient masking issues after neural net gets confident about its decisions. 
 
 
 ## Module Structure #
@@ -25,6 +25,12 @@ pytorch-adversarial-attacks
 ## Requirements #
 
 Required libraries to be able to use attacks module.
+
+> python                    3.7.7\
+> numpy                     1.16.4\
+> pytorch                   1.4.0\
+> tqdm                      4.31.1\
+> apex                      0.1  (optional)
 
 ## Example Use #
 
