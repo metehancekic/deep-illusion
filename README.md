@@ -22,6 +22,10 @@ pytorch-adversarial-attacks
         │   pgd.py                      Mixed Precision (Faster) - Projected Gradient Descent
         │   soft_attacks.py             Mixed Precision (Faster) - Soft attack functions
 ```
+## Requirements #
+
+Required libraries to be able to use attacks module.
+
 ## Example Use #
 
 Firstly, make sure that you added the folder path (i.e .../pythorch-adversarial-attacks/) that includes attacks folder into environment variable PYTHONPATH. You can add following code to ~/.bashrc to permanently add attacks as module or use it on terminal to add attacks to pythonpath temporarily.
