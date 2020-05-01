@@ -29,6 +29,11 @@ Firstly, make sure that you added the folder path (i.e .../pythorch-adversarial-
 git clone git@github.com:metehancekic/pytorch-adversarial-attacks.git
 export PYTHONPATH="${PYTHONPATH}:.../path_to_attacks/"
 ```
+To update it to the most recent version, get into the folder of pythorch-adversarial-attacks/ and pull the repository.
+```bash
+git pull origin master
+```
+
 Import the adversarial attack functions from attacks folder as following
 
 ```python
