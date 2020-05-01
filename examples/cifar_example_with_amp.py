@@ -42,10 +42,6 @@ test_loader = torch.utils.data.DataLoader(testset,
 
 classes = ['plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
 
-amp_args = dict(opt_level="O2", loss_scale='1.0', verbosity=False)
-if args.opt_level == 'O2':
-    amp_args['master_weights'] = False
-model, optimizer = amp.initialize(model, optimizer, **amp_args)
 
 def show_images(images, labels):
     num_img = len(images)
@@ -73,6 +69,11 @@ labels = [classes[i] for i in labels[:num_img_to_plot]]
 model = ResNet().to(device)
 model.load_state_dict(torch.load("checkpoints/ResNetMadry.pt"))
 model.eval()
+
+optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.5)
+
+amp_args = dict(opt_level="O2", loss_scale='1.0', verbosity=False)
+model, optimizer = amp.initialize(model, optimizer, **amp_args)
 
 
 def test_adversarial(model, test_loader, data_params, attack_params):
