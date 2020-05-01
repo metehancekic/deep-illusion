@@ -86,6 +86,10 @@ def test_adversarial(model, test_loader, data_params, attack_params):
         leave=True,
         # bar_format="{percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}{postfix}]"
         )
+
+    for p in model.parameters():
+        p.requires_grad = False
+        
     for data, target in test_load:
 
         data, target = data.to(device), target.to(device)
@@ -110,6 +114,8 @@ def test_adversarial(model, test_loader, data_params, attack_params):
         test_correct += pred.eq(target.view_as(pred)).sum().item()
 
     test_size = len(test_loader.dataset)
+    for p in model.parameters():
+        p.requires_grad = True
 
     return test_loss/test_size, test_correct/test_size
 
