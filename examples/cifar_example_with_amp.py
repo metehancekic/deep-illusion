@@ -102,6 +102,7 @@ def test_adversarial(model, test_loader, data_params, attack_params):
                         y_true=target,
                         data_params=data_params,
                         attack_params=attack_params,
+                        optimizer=optimizer,
                         verbose=False)
         perturbs = PGD(**pgd_args)
         data_adv = data + perturbs

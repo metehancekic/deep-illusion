@@ -12,7 +12,7 @@ from torch import nn
 from .fgsm import FGSM
 
 
-def PGD(net, x, y_true, data_params, attack_params, verbose=True):
+def PGD(net, x, y_true, data_params, attack_params, optimizer, verbose=True):
     """
     Description: Projected Gradient Descent
         Madry et al
@@ -21,6 +21,7 @@ def PGD(net, x, y_true, data_params, attack_params, verbose=True):
         x : Inputs to the net           (Batch)
         y_true : Labels                 (Batch)
         verbose: Verbosity              (Bool)
+        optimizer: Optimizer for amp    (torch.optimizer)
         data_params :
             x_min:  Minimum possible value of x (min pixel value)   (Float)
             x_max:  Maximum possible value of x (max pixel value)   (Float)
@@ -76,7 +77,7 @@ def PGD(net, x, y_true, data_params, attack_params, verbose=True):
 
         for _ in iters:
             perturb += FGSM(net, x+perturb, y_true, attack_params["step_size"],
-                            data_params, attack_params["norm"])
+                            data_params, attack_params["norm"], optimizer)
 
             # Clip perturbation if surpassed the norm bounds
             if attack_params["norm"] == "inf":
