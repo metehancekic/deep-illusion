@@ -34,20 +34,18 @@ attack_params = {
     "step_size": 2./255,
     "num_steps": 7,
     "random_start": False,
-    "num_restarts": 1,
-    }
+    "num_restarts": 1}
     
 pgd_args = dict(net=model,
                 x=data,
                 y_true=target,
                 data_params=data_params,
                 attack_params=attack_params,
-                verbose=False)
-                
+                verbose=False)               
 perturbs = PGD(**pgd_args)
+data_adversarial = data + perturbs
 
 ##### FGSM #####
-
 data_params = {"x_min": 0., "x_max": 1.}
 fgsm_args = dict(net=model,
                  x=data,
@@ -55,7 +53,6 @@ fgsm_args = dict(net=model,
                  eps=8.0/255,
                  data_params=data_params
                  norm="inf")
-FGSM(**fgsm_args)
-
-
+perturbs = FGSM(**fgsm_args)
+data_adversarial = data + perturbs
 ```
