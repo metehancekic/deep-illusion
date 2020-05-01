@@ -67,7 +67,7 @@ labels = [classes[i] for i in labels[:num_img_to_plot]]
 # show_images(images, labels)
 
 model = ResNet().to(device)
-model.load_state_dict(torch.load("checkpoints/ResNetMadry.pt"))
+# model.load_state_dict(torch.load("checkpoints/ResNetMadry.pt"))
 model.eval()
 
 optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.5)
