@@ -23,7 +23,39 @@ pytorch-adversarial-attacks
         │   soft_attacks.py             Mixed Precision (Faster) - Soft attack functions
 ```
 
-```[python]
-def asdasd():
-    pass
+```python
+from attacks import PGD, FGSM, RFGSM
+
+##### PGD ######
+data_params = {"x_min": 0., "x_max": 1.}
+attack_params = {
+    "norm": "inf",
+    "eps": 8./255,
+    "step_size": 2./255,
+    "num_steps": 7,
+    "random_start": False,
+    "num_restarts": 1,
+    }
+    
+pgd_args = dict(net=model,
+                x=data,
+                y_true=target,
+                data_params=data_params,
+                attack_params=attack_params,
+                verbose=False)
+                
+perturbs = PGD(**pgd_args)
+
+##### FGSM #####
+
+data_params = {"x_min": 0., "x_max": 1.}
+fgsm_args = dict(net=model,
+                 x=data,
+                 y_true=target,
+                 eps=8.0/255,
+                 data_params=data_params
+                 norm="inf")
+FGSM(**fgsm_args)
+
+
 ```
