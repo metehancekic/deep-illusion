@@ -14,11 +14,11 @@ class GradientMaskingError(ValueError):
 
 
 def cross_entropy_one_hot(y_hat, y, reduction=None):
-    """ 
+    """
     Args:
-         y_hat: Output of neural net	(Batch)
-         y: Original label				(Batch)
-         reduction: Reduce size by func	(Str)
+         y_hat: Output of neural net	    (Batch)
+         y: Original label				    (Batch)
+         reduction: Reduce size by func	    (Str)
     """
     if reduction == "mean":
         return torch.mean(torch.sum(-y * torch.nn.LogSoftmax(y_hat), dim=1))
@@ -28,7 +28,14 @@ def cross_entropy_one_hot(y_hat, y, reduction=None):
         return torch.sum(-y * torch.nn.LogSoftmax(y_hat), dim=1)
 
 def perturbation_properties(clean_data, adversarial_data, epsilon):
-
+    """
+    Input:
+        clean_data: Clean data                          (Batch)
+        adversarial_data: Perturbed data                (Batch)
+        epsilon: Attack Budget                          (Float)
+    Output:
+        e: Perturbations adversarial_data - clean_data  (Batch)
+    """
     if isinstance(clean_data, torch.Tensor):
         clean_data = clean_data.cpu().numpy()
         adversarial_data = adversarial_data.cpu().numpy()

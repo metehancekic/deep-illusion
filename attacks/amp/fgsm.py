@@ -25,18 +25,17 @@ def FGSM(net, x, y_true, eps, data_params, norm="inf", optimizer=None):
     """
     e = torch.zeros_like(x, requires_grad=True)
 
-    y_hat = net(x + e).type(torch.cuda.DoubleTensor)
-  
+    y_hat = net(x + e)
+
+    # Loss computation
     criterion = nn.CrossEntropyLoss(reduction="none")
     loss = criterion(y_hat, y_true)
-    # if loss.min() <= 0:
-    #     raise GradientMaskingError("Gradient masking is happening")
-    if optimizer is not None:
-        with amp.scale_loss(loss, optimizer) as scaled_loss:
-            scaled_loss.backward(gradient=torch.ones_like(
-                y_true, dtype=torch.float), retain_graph=True)
-    else:
-        loss.backward(gradient=torch.ones_like(y_true, dtype=torch.float), retain_graph=True)
+
+    # Calculating backprop with amp for images
+    with amp.scale_loss(loss, optimizer) as scaled_loss:
+        scaled_loss.backward(gradient=torch.ones_like(
+            y_true, dtype=torch.float), retain_graph=True)
+
     e_grad = e.grad.data
     if norm == "inf":
         perturbation = eps * e_grad.sign()
@@ -44,6 +43,8 @@ def FGSM(net, x, y_true, eps, data_params, norm="inf", optimizer=None):
         perturbation = e_grad * eps / \
             e_grad.view(e.shape[0], -1).norm(p=norm, dim=-1).view(-1, 1, 1, 1)
 
+    # Clipping perturbations so that  x_min < image + perturbation < x_max
     perturbation.data = torch.max(
         torch.min(perturbation, data_params["x_max"] - x), data_params["x_min"] - x)
+
     return perturbation

@@ -22,6 +22,8 @@ def RFGSM(net, x, y_true, data_params, attack_params, optimizer=None):
     Output:
         perturbation : Single step perturbation (Clamped with input limits)
     """
+
+    # Random perturbation initialization
     if attack_params["norm"] == "inf":
         e = torch.rand_like(x) * 2 * attack_params['eps'] - attack_params['eps']
     else:
@@ -29,18 +31,17 @@ def RFGSM(net, x, y_true, data_params, attack_params, optimizer=None):
         e = e * attack_params["eps"] / \
             e.view(x.shape[0], -1).norm(p=int(attack_params["norm"]), dim=-1).view(-1, 1, 1, 1)
 
+    # Clip randomly generated perturbation
     e.data = torch.max(torch.min(e, data_params["x_max"] - x), data_params["x_min"] - x)
     e.requires_grad = True
 
     y_hat = net(x + e)
     criterion = nn.CrossEntropyLoss(reduction="none")
     loss = criterion(y_hat, y_true)
-    if optimizer is not None:
-        with amp.scale_loss(loss, optimizer) as scaled_loss:
-            scaled_loss.backward(gradient=torch.ones_like(
-                y_true, dtype=torch.float), retain_graph=True)
-    else:
-        loss.backward(gradient=torch.ones_like(y_true, dtype=torch.float), retain_graph=True)
+
+    with amp.scale_loss(loss, optimizer) as scaled_loss:
+        scaled_loss.backward(gradient=torch.ones_like(
+            y_true, dtype=torch.float), retain_graph=True)
 
     e_grad = e.grad.data
 
@@ -53,4 +54,5 @@ def RFGSM(net, x, y_true, data_params, attack_params, optimizer=None):
 
     perturbation.data = torch.max(
         torch.min(perturbation, data_params["x_max"] - x), data_params["x_min"] - x)
+
     return perturbation
