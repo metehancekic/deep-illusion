@@ -1,1 +1,5 @@
-"""Adversarial attack module implemented for PyTorch"""
+"""Adversarial Machine Learning ToolBox
+
+- Currently includes Pytorch implementations
+- Tensorflow and Jax will follow
+"""
