@@ -1,6 +1,6 @@
-### Pytorch Adversarial Attacks #
+### Deep Illusion #
 
-Complete implementation of well-known attacks (PGD, FGSM, R-FGSM etc..). All attacks have an apex(amp) version which you can run your attacks fast and accurately. We strongly recommend that amp versions should only be used for adversarial training since it may have gradient masking issues after neural net gets confident about its decisions. 
+Deep Illusion is a toolbox for adversarial attacks in machine learning. Current version is only implemented for Pytorch models. DeepIllusion is a growing and developing module day by day. Module currently includes complete implementation of well-known attacks (PGD, FGSM, R-FGSM etc..). All attacks have an apex(amp) version which you can run your attacks fast and accurately. We strongly recommend that amp versions should only be used for adversarial training since it may have gradient masking issues after neural net gets confident about its decisions. 
 
 
 ## Module Structure #
@@ -9,17 +9,20 @@ Complete implementation of well-known attacks (PGD, FGSM, R-FGSM etc..). All att
 pytorch-adversarial-attacks
 │   README.md
 │
-└───attacks
-    │   _fgsm.py                     Fast Gradient Sign Method
-    │   _rfgsm.py                    Random Start + Fast Gradient Sign Method
-    │   _pgd.py                      Projected Gradient Descent
-    │   _soft_attacks.py             Soft attack functions
-    │ 
-    |───amp
-    |   │   _fgsm.py                     Mixed Precision (Faster) - Fast Gradient Sign Method
-    |   │   _rfgsm.py                    Mixed Precision (Faster) - Random Start + Fast Gradient Sign Method
-    |   │   _pgd.py                      Mixed Precision (Faster) - Projected Gradient Descent
-    |   |   _soft_attacks.py             Mixed Precision (Faster) - Soft attack functions
+└───deepIllusion
+    |   _utils.py               Utility functions
+    |
+    |───torchattacks
+    |   │   _fgsm.py                     Fast Gradient Sign Method
+    |   │   _rfgsm.py                    Random Start + Fast Gradient Sign Method
+    |   │   _pgd.py                      Projected Gradient Descent
+    |   │   _soft_attacks.py             Soft attack functions
+    |   │ 
+    |   └───amp
+    |       │   _fgsm.py                     Mixed Precision (Faster) - Fast Gradient Sign Method
+    |       │   _rfgsm.py                    Mixed Precision (Faster) - Random Start + Fast Gradient Sign Method
+    |       │   _pgd.py                      Mixed Precision (Faster) - Projected Gradient Descent
+    |       |   _soft_attacks.py             Mixed Precision (Faster) - Soft attack functions
     |   
     └───analysis
         │   _perturbation_statistics     Perturbations statistics functions
@@ -44,7 +47,7 @@ export PYTHONPATH="${PYTHONPATH}:.../path_to_attacks/"
 Import the adversarial attack functions from attacks folder as following
 
 ```python
-from attacks import PGD, FGSM, RFGSM
+from deepIllusion.torchattacks import PGD, FGSM, RFGSM
 
 ##### PGD ######
 data_params = {"x_min": 0., "x_max": 1.}
