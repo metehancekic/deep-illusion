@@ -11,6 +11,8 @@ from torch import nn
 
 from .fgsm import FGSM
 
+__all__ = ["PGD"]
+
 
 def PGD(net, x, y_true, data_params, attack_params, verbose=True):
     """

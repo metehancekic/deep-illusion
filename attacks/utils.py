@@ -6,6 +6,9 @@ import torch
 import numpy as np
 
 
+__all__ = ["GradientMaskingError", "cross_entropy_one_hot", "get_perturbation_properties"]
+
+
 class GradientMaskingError(ValueError):
     """Gradient masking error (false sense of robustness)"""
 

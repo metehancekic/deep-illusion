@@ -7,6 +7,8 @@ import torch
 import torchvision
 from torch import nn
 
+__all__ = ["RFGSM"]
+
 
 def RFGSM(net, x, y_true, data_params, attack_params):
     """

@@ -9,6 +9,8 @@ from torch import nn
 
 from .utils import GradientMaskingError
 
+__all__ = ["FGSM"]
+
 
 def FGSM(net, x, y_true, eps, data_params, norm="inf"):
     """
@@ -29,7 +31,7 @@ def FGSM(net, x, y_true, eps, data_params, norm="inf"):
     Explanation:
         e = epsilon * sign(grad_{x}(net(x)))
     """
-    e = torch.zeros_like(x, requires_grad=True) # perturbation
+    e = torch.zeros_like(x, requires_grad=True)  # perturbation
 
     # Increase precision to prevent gradient masking
     if x.device.type == "cuda":
@@ -41,7 +43,7 @@ def FGSM(net, x, y_true, eps, data_params, norm="inf"):
     criterion = nn.CrossEntropyLoss(reduction="none")
     loss = criterion(y_hat, y_true)
 
-    if loss.min() <= 0: # To make sure Gradient Masking is not happening
+    if loss.min() <= 0:  # To make sure Gradient Masking is not happening
         raise GradientMaskingError("Gradient masking is happening")
     # Calculating backprop for images
     loss.backward(gradient=torch.ones_like(y_true, dtype=torch.float), retain_graph=True)
