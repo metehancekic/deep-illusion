@@ -4,7 +4,7 @@ from models.resnet import ResNet
 
 from attacks import FGSM, RFGSM, PGD
 import attacks
-from attacks.utils import get_perturbation_properties
+from attacks.analysis import get_perturbation_stats
 
 from torchvision import datasets, transforms
 
@@ -96,7 +96,7 @@ def test_adversarial(model, test_loader, data_params, attack_params):
                         verbose=False)
         perturbs = PGD(**pgd_args)
         data_adv = data + perturbs
-        perturbation_properties = get_perturbation_properties(
+        perturbation_properties = get_perturbation_stats(
             data, data_adv, attack_params["eps"], verbose=False)
 
         output = model(data_adv)
