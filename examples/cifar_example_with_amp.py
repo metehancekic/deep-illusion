@@ -3,8 +3,8 @@ import time
 
 from models.resnet import ResNet
 
-from attacks.amp import FGSM, RFGSM, PGD
-from attacks.analysis import get_perturbation_stats
+from deepIllusion.torchattacks.amp import FGSM, RFGSM, PGD
+from deepIllusion.analysis import get_perturbation_stats
 
 from torchvision import datasets, transforms
 
