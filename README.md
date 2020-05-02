@@ -40,8 +40,7 @@ Required libraries to be able to use attacks module.
 
 Firstly, make sure that you've added the folder path (i.e .../pythorch-adversarial-attacks/) that includes attacks folder into environment variable PYTHONPATH. You can add following code to ~/.bashrc to permanently add attacks as module or use it on terminal to add attacks to pythonpath temporarily.
 ```bash
-git clone git@github.com:metehancekic/pytorch-adversarial-attacks.git
-export PYTHONPATH="${PYTHONPATH}:.../path_to_attacks/"
+pip install deepillusion
 ```
 
 Import the adversarial attack functions from attacks folder as following
