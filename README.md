@@ -78,3 +78,5 @@ data_adversarial = data + perturbs
 
 To update it to the most recent version, get into the folder of pythorch-adversarial-attacks/ and pull the repository.
 
+## Version #
+0.1
