@@ -10,17 +10,19 @@ pytorch-adversarial-attacks
 │   README.md
 │
 └───attacks
-    │   fgsm.py                     Fast Gradient Sign Method
-    │   rfgsm.py                    Random Start + Fast Gradient Sign Method
-    │   pgd.py                      Projected Gradient Descent
-    │   soft_attacks.py             Soft attack functions
-    |   utils.py                    Utility functions
+    │   _fgsm.py                     Fast Gradient Sign Method
+    │   _rfgsm.py                    Random Start + Fast Gradient Sign Method
+    │   _pgd.py                      Projected Gradient Descent
+    │   _soft_attacks.py             Soft attack functions
     │ 
-    └───amp
-        │   fgsm.py                     Mixed Precision (Faster) - Fast Gradient Sign Method
-        │   rfgsm.py                    Mixed Precision (Faster) - Random Start + Fast Gradient Sign Method
-        │   pgd.py                      Mixed Precision (Faster) - Projected Gradient Descent
-        │   soft_attacks.py             Mixed Precision (Faster) - Soft attack functions
+    |───amp
+    |   │   _fgsm.py                     Mixed Precision (Faster) - Fast Gradient Sign Method
+    |   │   _rfgsm.py                    Mixed Precision (Faster) - Random Start + Fast Gradient Sign Method
+    |   │   _pgd.py                      Mixed Precision (Faster) - Projected Gradient Descent
+    |   |   _soft_attacks.py             Mixed Precision (Faster) - Soft attack functions
+    |   
+    └───analysis
+        │   _perturbation_statistics     Perturbations statistics functions
 ```
 ## Requirements #
 
@@ -79,4 +81,4 @@ data_adversarial = data + perturbs
 To update it to the most recent version, get into the folder of pythorch-adversarial-attacks/ and pull the repository.
 
 ## Version #
-0.1
+0.0.1
