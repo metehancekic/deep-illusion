@@ -1,4 +1,4 @@
-# Authors: Metehan Cekic, Can Bakiskan
+"""Adversarial attack module implemented for PyTorch"""
 
 from ._fgsm import FGSM
 from ._rfgsm import RFGSM
