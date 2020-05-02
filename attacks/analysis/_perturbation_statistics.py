@@ -1,10 +1,10 @@
 import torch
 import numpy as np
 
-__all__ = ['get_perturbation_properties']
+__all__ = ['get_perturbation_stats']
 
 
-def get_perturbation_properties(clean_data, adversarial_data, epsilon, norm="inf", verbose=False):
+def get_perturbation_stats(clean_data, adversarial_data, epsilon, norm="inf", verbose=False):
     """
     Input:
         clean_data: Clean data                          (Batch)
