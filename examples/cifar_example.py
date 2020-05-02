@@ -2,8 +2,8 @@
 import time
 from models.resnet import ResNet
 
-from deepIllusion.torchattacks import FGSM, RFGSM, PGD
-from deepIllusion.analysis import get_perturbation_stats
+from deepillusion.torchattacks import FGSM, RFGSM, PGD
+from deepillusion.analysis import get_perturbation_stats
 
 from torchvision import datasets, transforms
 
