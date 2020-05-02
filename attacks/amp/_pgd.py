@@ -9,7 +9,7 @@ import torch
 import torchvision
 from torch import nn
 
-from .fgsm import FGSM
+from ._fgsm import FGSM
 
 
 def PGD(net, x, y_true, data_params, attack_params, optimizer, verbose=True):

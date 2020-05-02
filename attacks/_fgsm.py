@@ -1,13 +1,18 @@
-from apex import amp
+"""
+Author: Metehan Cekic
+Fast Gradient Sign Method
+"""
 
 import torch
 import torchvision
 from torch import nn
 
-from ..utils import GradientMaskingError
+from ._utils import GradientMaskingError
+
+__all__ = ["FGSM"]
 
 
-def FGSM(net, x, y_true, eps, data_params, norm="inf", optimizer=None):
+def FGSM(net, x, y_true, eps, data_params, norm="inf"):
     """
     Description: Fast gradient sign method
         Goodfellow [https://arxiv.org/abs/1412.6572]
@@ -22,20 +27,26 @@ def FGSM(net, x, y_true, eps, data_params, norm="inf", optimizer=None):
         norm:   Attack norm                                         (Str)
     Output:
         perturbation : Single step perturbation (Clamped with input limits)
-    """
-    e = torch.zeros_like(x, requires_grad=True)
 
-    y_hat = net(x + e).type(torch.cuda.DoubleTensor)
+    Explanation:
+        e = epsilon * sign(grad_{x}(net(x)))
+    """
+    e = torch.zeros_like(x, requires_grad=True)  # perturbation
+
+    # Increase precision to prevent gradient masking
+    if x.device.type == "cuda":
+        y_hat = net(x + e).type(torch.cuda.DoubleTensor)
+    else:
+        y_hat = net(x + e)
 
     # Loss computation
     criterion = nn.CrossEntropyLoss(reduction="none")
     loss = criterion(y_hat, y_true)
 
-    # Calculating backprop with amp for images
-    with amp.scale_loss(loss, optimizer) as scaled_loss:
-        scaled_loss.backward(gradient=torch.ones_like(
-            y_true, dtype=torch.float), retain_graph=True)
-
+    if loss.min() <= 0:  # To make sure Gradient Masking is not happening
+        raise GradientMaskingError("Gradient masking is happening")
+    # Calculating backprop for images
+    loss.backward(gradient=torch.ones_like(y_true, dtype=torch.float), retain_graph=True)
     e_grad = e.grad.data
     if norm == "inf":
         perturbation = eps * e_grad.sign()

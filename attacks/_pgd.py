@@ -9,7 +9,7 @@ import torch
 import torchvision
 from torch import nn
 
-from .fgsm import FGSM
+from ._fgsm import FGSM
 
 __all__ = ["PGD"]
 

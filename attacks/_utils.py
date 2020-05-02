@@ -17,6 +17,13 @@ class GradientMaskingError(ValueError):
         self.arg = arg
 
 
+class GradientMaskingWarning(Warning):
+    """Gradient masking warning (false sense of robustness)"""
+
+    def __init__(self, msg):
+        super(GradientMaskingWarning, self).__init__(msg)
+
+
 def cross_entropy_one_hot(y_hat, y, reduction=None):
     """
     Args:
