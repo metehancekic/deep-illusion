@@ -11,6 +11,7 @@ data_params = {"x_min": 0., "x_max": 1.}
 attack_params = {
     "norm": "inf",
     "eps": 8./255,
+    "alpha": 10./255,
     "step_size": 2./255,
     "num_steps": 7,
     "random_start": False,
@@ -19,9 +20,8 @@ attack_params = {
 
 attack_args = dict(net=model,
                    data_params=data_params,
-                   eps=attack_params['eps'],
-                   norm="inf")
-attack_func = FGSM
+                   attack_params=attack_params)
+attack_func = PGD
 
 start_time = time.time()
 attack_loss, attack_acc = test_adversarial(model, test_loader, attack_params,

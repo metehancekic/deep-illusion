@@ -11,6 +11,8 @@ import torch
 
 from models.resnet import ResNet
 
+from deepillusion.torchattacks.analysis import get_perturbation_stats
+
 
 def initiate_cifar10():
 
@@ -88,7 +90,45 @@ def test_adversarial(model, test_loader, attack_params, attack_args, attack_func
 
         data_adv = data + perturbs
         perturbation_properties = get_perturbation_stats(
-            data, data_adv, attack_params["eps"], verbose=False)
+            data, data_adv, attack_params["eps"], verbose=True)
+
+        output = model(data_adv)
+
+        cross_ent = nn.CrossEntropyLoss()
+        test_loss += cross_ent(output, target).item() * data_adv.size(0)
+
+        pred = output.argmax(dim=1, keepdim=True)
+        test_correct += pred.eq(target.view_as(pred)).sum().item()
+
+    test_size = len(test_loader.dataset)
+
+    return test_loss/test_size, test_correct/test_size
+
+
+def test_targeted_adversarial(model, test_loader, attack_params, attack_args, attack_func="PGD"):
+
+    device = model.parameters().__next__().device
+
+    for key in attack_params:
+        print(key + ': ' + str(attack_params[key]))
+
+    model.eval()
+    test_loss = 0
+    test_correct = 0
+    test_load = tqdm(
+        iterable=test_loader,
+        unit="batch",
+        leave=True)
+
+    for data, target in test_load:
+
+        data, target = data.to(device), target.to(device)
+
+        perturbs = attack_func(x=data, y_target=(target-1) % 10, **attack_args)
+
+        data_adv = data + perturbs
+        perturbation_properties = get_perturbation_stats(
+            data, data_adv, attack_params["eps"], verbose=True)
 
         output = model(data_adv)
 

@@ -56,6 +56,8 @@ def RFGSM(net, x, y_true, data_params, attack_params, optimizer=None):
         perturbation = (e + e_grad * attack_params['alpha']) / \
             (e+e_grad).view(e.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1)
 
-    perturbation.data = clip(perturbation, data_params["x_max"] - x, data_params["x_min"] - x)
+    perturbation.data = clip(
+        perturbation, data_params["x_min"] - x, data_params["x_max"] - x).detach()
+    assert (x+perturbation).min() >= 0 and (x+perturbation).max() <= 1
 
     return perturbation

@@ -46,7 +46,8 @@ def soft_attack_single_step(net, x, y_soft_vector, data_params, attack_params, o
             (e - e_grad).view(e.shape[0], -
                               1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1)
 
-    perturbation.data = clip(perturbation, data_params["x_max"] - x, data_params["x_min"] - x)
+    perturbation.data = clip(perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
+    assert (x+perturbation).min() >= 0 and (x+perturbation).max() <= 1
     return perturbation
 
 

@@ -56,8 +56,8 @@ def FGSM(net, x, y_true, eps, data_params, norm="inf"):
             e_grad.view(e.shape[0], -1).norm(p=norm, dim=-1).view(-1, 1, 1, 1)
 
     # Clipping perturbations so that  x_min < image + perturbation < x_max
-    perturbation.data = clip(perturbation, data_params["x_max"] - x, data_params["x_min"] - x)
-    breakpoint()
+    perturbation.data = clip(perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
+    assert (x+perturbation).min() >= 0 and (x+perturbation).max() <= 1
     return perturbation
 
 
@@ -104,6 +104,7 @@ def FGSM_targeted(net, x, y_target, eps, data_params, norm="inf"):
             e_grad.view(e.shape[0], -1).norm(p=norm, dim=-1).view(-1, 1, 1, 1)
 
     # Clipping perturbations so that  x_min < image + perturbation < x_max
-    perturbation.data = clip(perturbation, data_params["x_max"] - x, data_params["x_min"] - x)
+    perturbation.data = clip(perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
+    assert (x+perturbation).min() >= 0 and (x+perturbation).max() <= 1
 
     return perturbation

@@ -2,7 +2,7 @@ import time
 
 from deepillusion.torchattacks import FGSM, FGSM_targeted, RFGSM, PGD, BIM, soft_attack_single_step, iterative_soft_attack
 
-from test_utils import initiate_cifar10, test_adversarial
+from test_utils import initiate_cifar10, test_targeted_adversarial
 
 model, train_loader, test_loader = initiate_cifar10()
 
@@ -21,10 +21,10 @@ attack_args = dict(net=model,
                    data_params=data_params,
                    eps=attack_params['eps'],
                    norm="inf")
-attack_func = FGSM
+attack_func = FGSM_targeted
 
 start_time = time.time()
-attack_loss, attack_acc = test_adversarial(model, test_loader, attack_params,
-                                           attack_args=attack_args, attack_func=attack_func)
+attack_loss, attack_acc = test_targeted_adversarial(model, test_loader, attack_params,
+                                                    attack_args=attack_args, attack_func=attack_func)
 print(f'Attack  \t loss: {attack_loss:.4f} \t acc: {attack_acc:.4f}')
 print(f"{time.time()-start_time:.2f} seconds")
