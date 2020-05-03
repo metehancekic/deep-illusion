@@ -2,7 +2,8 @@ from distutils.core import setup
 
 setup(
     name='deepillusion',
-    packages=['deepillusion'],
+    packages=['deepillusion', 'deepillusion.torchattacks', 'deepillusion.torchattacks.amp',
+              'deepillusion.torchattacks.analysis', 'deepillusion.tfattacks', 'deepillusion.jaxattacks'],
     version='0.0.3',
     license='MIT',
     description='Adversarial Machine Learning ToolBox',
