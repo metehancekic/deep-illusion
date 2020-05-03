@@ -34,31 +34,32 @@ deep-illusion
 |       |
 |
 └───tests
-    |
-    |
-    |
-    |
+    |   fgsm_test.py
+    |   fgsmt_test.py
+    |   pgd_test.py
+    |   bim_test.py
+    |   rfgsm_test.py
+    |   test_utils.py
 ```
-## Requirements #
-
-Required libraries to be able to use attacks module.
+## Dependencies #
 
 > numpy                     1.16.4\
-> pytorch                   1.4.0\
 > tqdm                      4.31.1\
+
+# Torch
+> pytorch                   1.4.0\
 > apex                      0.1  (optional)
 
-## Example Use #
+## Installation #
 
-Firstly, make sure that you've added the folder path (i.e .../pythorch-adversarial-attacks/) that includes attacks folder into environment variable PYTHONPATH. You can add following code to ~/.bashrc to permanently add attacks as module or use it on terminal to add attacks to pythonpath temporarily.
 ```bash
 pip install deepillusion
 ```
 
-Import the adversarial attack functions from attacks folder as following
+## Example Use #
 
 ```python
-from deepIllusion.torchattacks import PGD, FGSM, RFGSM
+from deepillusion.torchattacks import PGD, FGSM, RFGSM
 
 ##### PGD ######
 data_params = {"x_min": 0., "x_max": 1.}
@@ -92,7 +93,7 @@ data_adversarial = data + perturbs
 ```
 ## Update #
 
-To update it to the most recent version, get into the folder of pythorch-adversarial-attacks/ and pull the repository.
+- pip install deepillusion --upgrade
 
-## Version #
-0.0.2
+## Current Version #
+0.0.5
