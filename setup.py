@@ -1,17 +1,17 @@
 from distutils.core import setup
 
 setup(
-    name='deepillusion',         
-    packages=['deepillusion'],   
-    version='0.0.2',      
-    license='MIT',        
-    description='Adversarial Machine Learning ToolBox',   
-    author='Metehan Cekic',                   
-    author_email='metehancekic@ucsb.edu',     
+    name='deepillusion',
+    packages=['deepillusion'],
+    version='0.0.3',
+    license='MIT',
+    description='Adversarial Machine Learning ToolBox',
+    author='Metehan Cekic',
+    author_email='metehancekic@ucsb.edu',
     url='https://github.com/metehancekic/deep-illusion.git',
-    download_url='https://github.com/metehancekic/deep-illusion/archive/v_002.tar.gz',    
-    keywords=['Adversarial', 'Attack', 'Pytorch'],   
-    install_requires=[           
+    download_url='https://github.com/metehancekic/deep-illusion/archive/v_002.tar.gz',
+    keywords=['Adversarial', 'Attack', 'Pytorch'],
+    install_requires=[
         'tqdm',
         'numpy',
         ],

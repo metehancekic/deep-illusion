@@ -6,4 +6,8 @@
 
 from ._version import __version__
 
+from . import torchattacks
+from . import tfattacks
+from . import jaxattacks
+
 __all__ = ["__version__"]
