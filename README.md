@@ -1,6 +1,6 @@
 ![alt text][logo]
 
-[logo]: https://github.com/metehancekic/deep-illusion/blob/master/figs/icon.png
+[logo]: https://github.com/metehancekic/deep-illusion/blob/master/figs/confused-ai.png
 
 ### Deep Illusion #
 
