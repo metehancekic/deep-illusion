@@ -43,12 +43,20 @@ deep-illusion
 ```
 ## Dependencies #
 
+**necessary**
+
 > numpy                     1.16.4\
 > tqdm                      4.31.1\
 
-**Torch**
+**torchattacks**
 > pytorch                   1.4.0\
 > apex                      0.1  (optional)
+
+**tfattacks**
+> tensorflow                   
+
+**jaxattacks**
+> jax
 
 ## Installation #
 
