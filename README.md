@@ -6,32 +6,38 @@ Deep Illusion is a toolbox for adversarial attacks in machine learning. Current 
 ## Module Structure #
 
 ```
-pytorch-adversarial-attacks
+deep-illusion
 │   README.md
 │
-└───deepIllusion
-    |   _utils.py               Utility functions
+|───deepillusion
+|   |   _utils.py               Utility functions
+|   |
+|   |───torchattacks
+|   |   │   _fgsm.py                     Fast Gradient Sign Method
+|   |   │   _rfgsm.py                    Random Start + Fast Gradient Sign Method
+|   |   │   _pgd.py                      Projected Gradient Descent
+|   |   │   _soft_attacks.py             Soft attack functions
+|   |   │ 
+|   |   |───amp
+|   |   |   │   _fgsm.py                     Mixed Precision (Faster) - Fast Gradient Sign Method
+|   |   |   │   _rfgsm.py                    Mixed Precision (Faster) - Random Start + Fast Gradient Sign Method
+|   |   |   │   _pgd.py                      Mixed Precision (Faster) - Projected Gradient Descent
+|   |   |   |   _soft_attacks.py             Mixed Precision (Faster) - Soft attack functions
+|   |   |
+|   |   └───analysis
+|   |       │   _perturbation_statistics     Perturbations statistics functions
+|   |
+|   |───tfattacks
+|   |   |
+|   |
+|   └───jaxattacks
+|       |
+|
+└───tests
     |
-    |───torchattacks
-    |   │   _fgsm.py                     Fast Gradient Sign Method
-    |   │   _rfgsm.py                    Random Start + Fast Gradient Sign Method
-    |   │   _pgd.py                      Projected Gradient Descent
-    |   │   _soft_attacks.py             Soft attack functions
-    |   │ 
-    |   |───amp
-    |   |   │   _fgsm.py                     Mixed Precision (Faster) - Fast Gradient Sign Method
-    |   |   │   _rfgsm.py                    Mixed Precision (Faster) - Random Start + Fast Gradient Sign Method
-    |   |   │   _pgd.py                      Mixed Precision (Faster) - Projected Gradient Descent
-    |   |   |   _soft_attacks.py             Mixed Precision (Faster) - Soft attack functions
-    |   |
-    |   └───analysis
-    |       │   _perturbation_statistics     Perturbations statistics functions
     |
-    |───tfattacks
-    |   |
     |
-    └───jaxattacks
-        |
+    |
 ```
 ## Requirements #
 
