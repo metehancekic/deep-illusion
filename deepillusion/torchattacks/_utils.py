@@ -5,7 +5,7 @@ Torch Auxilary tools
 import torch
 import numpy as np
 
-__all__ = ["cross_entropy_one_hot"]
+__all__ = ["cross_entropy_one_hot", "clip"]
 
 
 def cross_entropy_one_hot(y_hat, y, reduction=None):
@@ -21,3 +21,23 @@ def cross_entropy_one_hot(y_hat, y, reduction=None):
         return torch.sum(torch.sum(-y * torch.nn.LogSoftmax(y_hat), dim=1))
     else:
         return torch.sum(-y * torch.nn.LogSoftmax(y_hat), dim=1)
+
+
+def clip(x, lower, upper):
+    """
+    Args:
+    input:
+        x: Input tensor                    (Batch)
+        lower: lower bound                 (float or torch.Tensor)
+        upper: upper bound                 (float or torch.Tensor)
+    output:
+        x: Clipped x                       (Batch)
+    """
+    if isinstance(lower, torch.Tensor) and isinstance(upper, torch.Tensor):
+        x = torch.max(torch.min(x, upper), lower)
+    elif isinstance(lower, (float, int)) and isinstance(upper, (float, int)):
+        x = torch.clamp(x, min=lower, max=upper)
+    else:
+        raise ValueError("lower and upper should be same type (float, int, torch.Tensor)")
+
+    return x

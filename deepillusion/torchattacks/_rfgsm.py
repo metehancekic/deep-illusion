@@ -7,6 +7,8 @@ import torch
 import torchvision
 from torch import nn
 
+from ._utils import clip
+
 __all__ = ["RFGSM"]
 
 
@@ -61,7 +63,6 @@ def RFGSM(net, x, y_true, data_params, attack_params):
             (e+e_grad).view(e.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1)
 
     # Clipping perturbations so that  x_min < image + perturbation < x_max
-    perturbation.data = torch.max(
-        torch.min(perturbation, data_params["x_max"] - x), data_params["x_min"] - x)
+    perturbation.data = clip(perturbation, data_params["x_max"] - x, data_params["x_min"] - x)
 
     return perturbation

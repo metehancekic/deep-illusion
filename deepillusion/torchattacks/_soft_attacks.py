@@ -15,7 +15,7 @@ import torch
 import torchvision
 from torch import nn
 
-from ._utils import cross_entropy_one_hot
+from ._utils import cross_entropy_one_hot, clip
 
 __all__ = ["soft_attack_single_step", "iterative_soft_attack"]
 
@@ -46,8 +46,7 @@ def soft_attack_single_step(net, x, y_soft_vector, data_params, attack_params, o
             (e - e_grad).view(e.shape[0], -
                               1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1)
 
-    perturbation.data = torch.max(
-        torch.min(perturbation, data_params["x_max"] - x), data_params["x_min"] - x)
+    perturbation.data = clip(perturbation, data_params["x_max"] - x, data_params["x_min"] - x)
     return perturbation
 
 
@@ -71,9 +70,6 @@ def iterative_soft_attack(net, x, y_soft_vector, data_params, attack_params, opt
         perturbs : Perturbations for given batch
     """
 
-    # fooled_indices = np.array(y_true.shape[0])
-    perturbs = torch.zeros_like(x)
-
     if attack_params["random_start"]:
         if attack_params["norm"] == "inf":
             perturb = (2 * torch.rand_like(x) - 1) * attack_params["eps"]
@@ -91,8 +87,7 @@ def iterative_soft_attack(net, x, y_soft_vector, data_params, attack_params, opt
         iters = range(attack_params["num_steps"])
 
     for _ in iters:
-        perturb += soft_attack_single_step(net, torch.clamp(x+perturb, data_params["x_min"],
-                                                            data_params["x_max"]),
+        perturb += soft_attack_single_step(net, x+perturb,
                                            y_soft_vector, data_params, attack_params, optimizer)
         if attack_params["norm"] == "inf":
             perturb = torch.clamp(perturb, -attack_params["eps"], attack_params["eps"])
@@ -103,9 +98,4 @@ def iterative_soft_attack(net, x, y_soft_vector, data_params, attack_params, opt
         out = torch.nn.functional.softmax(net(x+perturb))
         print(out[0])
 
-    perturbs = perturb.data
-
-    perturbs.data = torch.max(
-        torch.min(perturbs, data_params["x_max"] - x), data_params["x_min"] - x)
-
-    return perturbs
+    return perturb
