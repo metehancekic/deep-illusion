@@ -1,6 +1,6 @@
 ![alt text][logo]
 
-[logo]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png 
+[logo]: https://github.com/metehancekic/deep-illusion/blob/master/figs/icon.png
 
 ### Deep Illusion #
 
