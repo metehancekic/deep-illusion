@@ -9,7 +9,7 @@ setup(
     author='Metehan Cekic',
     author_email='metehancekic@ucsb.edu',
     url='https://github.com/metehancekic/deep-illusion.git',
-    download_url='https://github.com/metehancekic/deep-illusion/archive/v_002.tar.gz',
+    download_url='https://github.com/metehancekic/deep-illusion/archive/v_003.tar.gz',
     keywords=['Adversarial', 'Attack', 'Pytorch'],
     install_requires=[
         'tqdm',
