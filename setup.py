@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name='deepillusion',         
     packages=['deepillusion'],   
-    version='0.0.1',      
+    version='0.0.2',      
     license='MIT',        
     description='Adversarial Machine Learning ToolBox',   
     author='Metehan Cekic',                   
