@@ -15,6 +15,37 @@ from models.lenet import CNN
 from deepillusion.torchattacks.analysis import get_perturbation_stats
 
 
+def save_image(model, test_loader, attack_params, attack_args, attack_func="PGD"):
+
+    device = model.parameters().__next__().device
+    data, target = iter(test_loader).__next__()
+
+    data, target = data.to(device), target.to(device)
+
+    perturbs = attack_func(x=data, y_true=target, **attack_args)
+
+    data_adv = data + perturbs
+
+    output = model(data_adv)
+
+    pred = output.argmax(dim=1, keepdim=True)
+
+    fig = plt.figure()
+    plt.imshow(data.permute(0, 2, 3, 1).cpu().numpy()[0])
+    plt.axis("off")
+    plt.savefig(str(target.cpu().numpy()[0])+".pdf")
+
+    fig = plt.figure()
+    plt.imshow(data_adv.permute(0, 2, 3, 1).cpu().numpy()[0])
+    plt.axis("off")
+    plt.savefig(str(pred.cpu().numpy()[0])+".pdf")
+
+    fig = plt.figure()
+    plt.imshow(10 * (perturbs+attack_params["eps"]).permute(0, 2, 3, 1).cpu().numpy()[0])
+    plt.axis("off")
+    plt.savefig("perturb"+".pdf")
+
+
 def initiate_cifar10():
 
     use_cuda = torch.cuda.is_available()
