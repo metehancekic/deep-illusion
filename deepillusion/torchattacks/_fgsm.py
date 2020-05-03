@@ -44,11 +44,14 @@ def FGSM(net, x, y_true, eps, data_params, norm="inf"):
     criterion = nn.CrossEntropyLoss(reduction="none")
     loss = criterion(y_hat, y_true)
 
-    if loss.min() <= 0:  # To make sure Gradient Masking is not happening
-        raise GradientMaskingError("Gradient masking is happening")
     # Calculating backprop for images
     loss.backward(gradient=torch.ones_like(y_true, dtype=torch.float), retain_graph=True)
     e_grad = e.grad.data
+    # To make sure Gradient Masking is not happening
+    max_attack_for_each_image, _ = e_grad.abs().view(e.size(0), -1).max(dim=1)
+    if max_attack_for_each_image.min() <= 0:
+        raise GradientMaskingError("Gradient masking is happening")
+
     if norm == "inf":
         perturbation = eps * e_grad.sign()
     else:
@@ -92,11 +95,14 @@ def FGSM_targeted(net, x, y_target, eps, data_params, norm="inf"):
     criterion = nn.CrossEntropyLoss(reduction="none")
     loss = criterion(y_hat, y_target)
 
-    if loss.min() <= 0:  # To make sure Gradient Masking is not happening
-        raise GradientMaskingError("Gradient masking is happening")
     # Calculating backprop for images
     loss.backward(gradient=torch.ones_like(y_target, dtype=torch.float), retain_graph=True)
     e_grad = e.grad.data
+    # To make sure Gradient Masking is not happening
+    max_attack_for_each_image, _ = e_grad.abs().view(e.size(0), -1).max(dim=1)
+    if max_attack_for_each_image.min() <= 0:
+        raise GradientMaskingError("Gradient masking is happening")
+
     if norm == "inf":
         perturbation = -eps * e_grad.sign()
     else:

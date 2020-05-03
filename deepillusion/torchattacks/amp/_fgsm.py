@@ -4,7 +4,6 @@ import torch
 import torchvision
 from torch import nn
 
-from ..._utils import GradientMaskingError
 from .._utils import clip
 
 
