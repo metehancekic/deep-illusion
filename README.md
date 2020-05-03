@@ -46,7 +46,7 @@ deep-illusion
 > numpy                     1.16.4\
 > tqdm                      4.31.1\
 
-# Torch
+**Torch**
 > pytorch                   1.4.0\
 > apex                      0.1  (optional)
 
