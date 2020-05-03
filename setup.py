@@ -1,18 +1,17 @@
 from distutils.core import setup
 
 setup(
-    name='deepillusion',         # How you named your package folder (MyLib)
-    packages=['deepillusion'],   # Chose the same as "name"
-    version='0.0.1',      # Start with a small number and increase it with every change you make
-    license='MIT',        # Chose a license from here: https://help.github.com/articles/licensing-a-repository
-    description='Adversarial Machine Learning ToolBox',   # Give a short description about your library
-    author='Metehan Cekic',                   # Type in your name
-    author_email='metehancekic@ucsb.edu',      # Type in your E-Mail
-    # Provide either the link to your github or to your website
+    name='deepillusion',         
+    packages=['deepillusion'],   
+    version='0.0.1',      
+    license='MIT',        
+    description='Adversarial Machine Learning ToolBox',   
+    author='Metehan Cekic',                   
+    author_email='metehancekic@ucsb.edu',     
     url='https://github.com/metehancekic/deep-illusion.git',
-    download_url='https://github.com/metehancekic/deep-illusion/archive/v_001.tar.gz',    # I explain this later on
-    keywords=['Adversarial', 'Attack', 'Pytorch'],   # Keywords that define your package best
-    install_requires=[            # I get to this in a second
+    download_url='https://github.com/metehancekic/deep-illusion/archive/v_001.tar.gz',    
+    keywords=['Adversarial', 'Attack', 'Pytorch'],   
+    install_requires=[           
         'tqdm',
         'numpy',
         ],
