@@ -15,7 +15,7 @@ import torch
 import torchvision
 from torch import nn
 
-from .._utils import cross_entropy_one_hot
+from ._utils import cross_entropy_one_hot
 
 __all__ = ["soft_attack_single_step", "iterative_soft_attack"]
 
