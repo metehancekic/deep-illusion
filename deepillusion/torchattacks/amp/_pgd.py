@@ -1,13 +1,28 @@
 """
-Author: Metehan Cekic
-Projected Gradient Descent
+Description: Projected Gradient Descent
+Madry
+
+Example Use:
+
+pgd_args = dict(net=model,
+                x=x,
+                y_true=y_true,
+                data_params={"x_min": 0.,
+                             "x_max": 1.},
+                attack_params={"norm": "inf",
+                               "eps": 8./255,
+                               "step_size": 2./255,
+                               "num_steps": 7,
+                               "random_start": False,
+                               "num_restarts": 1},
+                optimizer=optimizer,
+                verbose=False)
+perturbs = PGD(**pgd_args)
+data_adversarial = data + perturbs
 """
 
 from tqdm import tqdm
-
 import torch
-import torchvision
-from torch import nn
 
 from ._fgsm import FGSM
 
@@ -22,8 +37,6 @@ def PGD(net, x, y_true, data_params, attack_params, optimizer, verbose=True):
         net : Neural Network            (torch.nn.Module)
         x : Inputs to the net           (Batch)
         y_true : Labels                 (Batch)
-        verbose: Verbosity              (Bool)
-        optimizer: Optimizer for amp    (torch.optimizer)
         data_params :
             x_min:  Minimum possible value of x (min pixel value)   (Float)
             x_max:  Maximum possible value of x (max pixel value)   (Float)
@@ -34,6 +47,8 @@ def PGD(net, x, y_true, data_params, attack_params, optimizer, verbose=True):
                 num_steps : Number of iterations                    (Int)
                 random_start : Randomly initialize image with perturbation  (Bool)
                 num_restarts : Number of restarts                           (Int)
+        optimizer: Optimizer for amp    (torch.optimizer)
+        verbose: Verbosity              (Bool)
     Output:
         perturbs : Perturbations for given batch
 
@@ -82,8 +97,14 @@ def PGD(net, x, y_true, data_params, attack_params, optimizer, verbose=True):
             iters = range(attack_params["num_steps"])
 
         for _ in iters:
-            perturb += FGSM(net, x+perturb, y_true, attack_params["step_size"],
-                            data_params, attack_params["norm"], optimizer)
+            fgsm_args = dict(net=net,
+                             x=x+perturb,
+                             y_true=y_true,
+                             data_params=data_params,
+                             attack_params={"norm": attack_params["norm"],
+                                            "eps": attack_params["step_size"]},
+                             optimizer=optimizer)
+            perturb += FGSM(**fgsm_args)
 
             # Clip perturbation if surpassed the norm bounds
             if attack_params["norm"] == "inf":

@@ -1,7 +1,22 @@
-from apex import amp
+"""
+Description: Random Fast Gradient Sign Method
 
+Example Use:
+
+rfgsm_args = dict(net=net,
+                 x=x,
+                 y_true=y_true,
+                 data_params={"x_min": 0.,
+                              "x_max": 1.},
+                 attack_params={"norm": "inf",
+                                "eps": 8.0/255,
+                                "alpha": 10.0/255},
+                 optimizer=optimizer)
+perturbation = RFGSM(**rfgsm_args)
+"""
+
+from apex import amp
 import torch
-import torchvision
 from torch import nn
 
 from .._utils import clip
@@ -9,7 +24,7 @@ from .._utils import clip
 __all__ = ["RFGSM"]
 
 
-def RFGSM(net, x, y_true, data_params, attack_params, optimizer=None):
+def RFGSM(net, x, y_true, data_params, attack_params, optimizer=None, verbose=False):
     """
     Description: Random + Fast Gradient Sign Method
     Input :
@@ -23,6 +38,8 @@ def RFGSM(net, x, y_true, data_params, attack_params, optimizer=None):
             norm:   Attack norm         (Str)
             eps:    Attack budget       (Float)
             alpha:  Attack step size    (Float)
+        optimizer: Optimizer
+        verbose: Verbosity
     Output:
         perturbation : Single step perturbation (Clamped with input limits)
     """

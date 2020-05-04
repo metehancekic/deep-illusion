@@ -1,13 +1,25 @@
 """
-Author: Metehan Cekic
-Basic Iterative Method
+Description: Projected Gradient Descent
+Madry
+
+Example Use:
+
+bim_args = dict(net=model,
+                x=x,
+                y_true=y_true,
+                data_params={"x_min": 0.,
+                             "x_max": 1.},
+                attack_params={"norm": "inf",
+                               "eps": 8./255,
+                               "step_size": 2./255,
+                               "num_steps": 7},
+                verbose=False)
+perturbs = BIM(**bim_args)
+data_adversarial = data + perturbs
 """
 
 from tqdm import tqdm
-
 import torch
-import torchvision
-from torch import nn
 
 from ._fgsm import FGSM
 
@@ -18,18 +30,18 @@ def BIM(net, x, y_true, data_params, attack_params, verbose=True):
     """
     Description: Basic Iterative Method
     Input :
-        net : Neural Network            (torch.nn.Module)
-        x : Inputs to the net           (Batch)
-        y_true : Labels                 (Batch)
-        verbose: Verbosity              (Bool)
-        data_params :
+        net : Neural Network                                        (torch.nn.Module)
+        x : Inputs to the net                                       (Batch)
+        y_true : Labels                                             (Batch)
+        data_params :                                               (dict)
             x_min:  Minimum possible value of x (min pixel value)   (Float)
             x_max:  Maximum possible value of x (max pixel value)   (Float)
-        attack_params : Attack parameters as a dictionary
+        attack_params : Attack parameters as a dictionary           (dict)
                 norm : Norm of attack                               (Str)
                 eps : Attack budget                                 (Float)
                 step_size : Attack budget for each iteration        (Float)
                 num_steps : Number of iterations                    (Int)
+        verbose: Verbosity                                          (Bool)
     Output:
         perturbs : Perturbations for given batch
 
@@ -55,8 +67,13 @@ def BIM(net, x, y_true, data_params, attack_params, verbose=True):
         iters = range(attack_params["num_steps"])
 
     for _ in iters:
-        perturb += FGSM(net, x+perturb, y_true, attack_params["step_size"],
-                        data_params, attack_params["norm"])
+        fgsm_args = dict(net=net,
+                         x=x+perturb,
+                         y_true=y_true,
+                         data_params=data_params,
+                         attack_params={"norm": attack_params["norm"],
+                                        "eps": attack_params["step_size"]})
+        perturb += FGSM(**fgsm_args)
 
         # Clip perturbation if surpassed the norm bounds
         if attack_params["norm"] == "inf":

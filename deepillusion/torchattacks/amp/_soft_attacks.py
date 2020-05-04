@@ -1,19 +1,37 @@
 """
-Authors: Metehan Cekic
-Date: 2020-04-23
+Description: Attack to generate exact probability distributions
 
-Description: Attack code to aim soft predictions
+soft_attack_single_step_args = dict(net=model,
+                                    x=x,
+                                    y_soft_vector=y_soft_vector,
+                                    data_params={"x_min": 0.,
+                                                 "x_max": 1.},
+                                    attack_params={"norm": "inf",
+                                                   "eps": 8./255},
+                                    optimizer=optimizer)
+perturbs = soft_attack_single_step(**soft_attack_single_step_args)
+data_adversarial = data + perturbs
 
-Funcs: soft_attack_single_step
-       iterative_soft_attack
-
+iterative_soft_attack_args = dict(net=model,
+                                    x=x,
+                                    y_soft_vector=y_soft_vector,
+                                    data_params={"x_min": 0.,
+                                                 "x_max": 1.},
+                                    attack_params={"norm": "inf",
+                                                   "eps": 8./255,
+                                                   "step_size": 2./255,
+                                                   "num_steps": 7,
+                                                   "random_start": False,
+                                                   "num_restarts": 1},
+                                    optimizer=optimizer,
+                                    verbose=False)
+perturbs = iterative_soft_attack(**iterative_soft_attack_args)
+data_adversarial = data + perturbs
 """
 
 from tqdm import tqdm
 from apex import amp
-
 import torch
-import torchvision
 from torch import nn
 
 from .._utils import cross_entropy_one_hot, clip
@@ -21,6 +39,8 @@ from .._utils import cross_entropy_one_hot, clip
 
 __all__ = ["soft_attack_single_step", "iterative_soft_attack"]
 
+
+# Integrate AMP
 
 def soft_attack_single_step(net, x, y_soft_vector, data_params, attack_params, optimizer=None):
 

@@ -1,13 +1,28 @@
 """
-Author: Metehan Cekic
-Projected Gradient Descent
+Description: Projected Gradient Descent
+Madry
+
+Example Use:
+
+pgd_args = dict(net=model,
+                x=x,
+                y_true=y_true,
+                data_params={"x_min": 0.,
+                             "x_max": 1.},
+                attack_params={"norm": "inf",
+                               "eps": 8./255,
+                               "step_size": 2./255,
+                               "num_steps": 7,
+                               "random_start": False,
+                               "num_restarts": 1},
+                verbose=False)
+perturbs = PGD(**pgd_args)
+data_adversarial = data + perturbs
+
 """
 
 from tqdm import tqdm
-
 import torch
-import torchvision
-from torch import nn
 
 from ._fgsm import FGSM
 
@@ -81,8 +96,13 @@ def PGD(net, x, y_true, data_params, attack_params, verbose=True):
             iters = range(attack_params["num_steps"])
 
         for _ in iters:
-            perturb += FGSM(net, x+perturb, y_true, attack_params["step_size"],
-                            data_params, attack_params["norm"])
+            fgsm_args = dict(net=net,
+                             x=x+perturb,
+                             y_true=y_true,
+                             data_params=data_params,
+                             attack_params={"norm": attack_params["norm"],
+                                            "eps": attack_params["step_size"]})
+            perturb += FGSM(**fgsm_args)
 
             # Clip perturbation if surpassed the norm bounds
             if attack_params["norm"] == "inf":

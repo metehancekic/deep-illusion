@@ -1,18 +1,35 @@
 """
-Authors: Metehan Cekic
-Date: 2020-04-23
+Description: Attack to generate exact probability distributions
 
-Description: Attack code to aim soft predictions
+soft_attack_single_step_args = dict(net=model,
+                                    x=x,
+                                    y_soft_vector=y_soft_vector,
+                                    data_params={"x_min": 0.,
+                                                 "x_max": 1.},
+                                    attack_params={"norm": "inf",
+                                                   "eps": 8./255},
+                                    verbose=False)
+perturbs = soft_attack_single_step(**soft_attack_single_step_args)
+data_adversarial = data + perturbs
 
-Funcs: soft_attack_single_step
-       iterative_soft_attack
-
+iterative_soft_attack_args = dict(net=model,
+                                    x=x,
+                                    y_soft_vector=y_soft_vector,
+                                    data_params={"x_min": 0.,
+                                                 "x_max": 1.},
+                                    attack_params={"norm": "inf",
+                                                   "eps": 8./255,
+                                                   "step_size": 2./255,
+                                                   "num_steps": 7,
+                                                   "random_start": False,
+                                                   "num_restarts": 1},
+                                    verbose=False)
+perturbs = iterative_soft_attack(**iterative_soft_attack_args)
+data_adversarial = data + perturbs
 """
 
 from tqdm import tqdm
-
 import torch
-import torchvision
 from torch import nn
 
 from ._utils import cross_entropy_one_hot, clip
@@ -20,17 +37,29 @@ from ._utils import cross_entropy_one_hot, clip
 __all__ = ["soft_attack_single_step", "iterative_soft_attack"]
 
 
-def soft_attack_single_step(net, x, y_soft_vector, data_params, attack_params, optimizer=None):
-
-    if attack_params["norm"] == "inf":
-        e = torch.rand_like(x) * 2 * attack_params['eps'] - attack_params['eps']
+def soft_attack_single_step(net, x, y_soft_vector, data_params, attack_params, verbose=False):
+    """
+    Input :
+        net : Neural Network (Classifier)
+        x : Inputs to the net
+        y_soft_vector : Labels
+        data_params: Data parameters as dictionary
+            x_min : Minimum legal value for elements of x
+            x_max : Maximum legal value for elements of x
+        attack_params : Attack parameters as a dictionary
+            norm : Norm of attack
+            eps : Attack budget
+        verbose: Verbosity
+    Output:
+        perturbs : Perturbations for given batch
+    """
 
     e = torch.zeros_like(x, requires_grad=True)
 
     if x.device.type == "cuda":
         y_hat = net(x + e).type(torch.cuda.DoubleTensor)
     else:
-        y_hat = net(x + e).type(torch.DoubleTensor)
+        y_hat = net(x + e)
 
     loss = cross_entropy_one_hot(y_hat, y_soft_vector)
 
@@ -40,7 +69,7 @@ def soft_attack_single_step(net, x, y_soft_vector, data_params, attack_params, o
     e_grad = e.grad.data
 
     if attack_params["norm"] == "inf":
-        perturbation = -attack_params["step_size"] * e_grad
+        perturbation = -attack_params["eps"] * e_grad
     else:
         perturbation = (e - e_grad * attack_params['eps']) / \
             (e - e_grad).view(e.shape[0], -
@@ -51,22 +80,23 @@ def soft_attack_single_step(net, x, y_soft_vector, data_params, attack_params, o
     return perturbation
 
 
-def iterative_soft_attack(net, x, y_soft_vector, data_params, attack_params, optimizer=None, verbose=False):
+def iterative_soft_attack(net, x, y_soft_vector, data_params, attack_params, verbose=False):
     """
     Input :
         net : Neural Network (Classifier)
         x : Inputs to the net
-        y_true : Labels
+        y_soft_vector : Labels
         data_params: Data parameters as dictionary
-                x_min : Minimum legal value for elements of x
-                x_max : Maximum legal value for elements of x
+            x_min : Minimum legal value for elements of x
+            x_max : Maximum legal value for elements of x
         attack_params : Attack parameters as a dictionary
-                norm : Norm of attack
-                eps : Attack budget
-                step_size : Attack budget for each iteration
-                num_steps : Number of iterations
-                random_start : Randomly initialize image with perturbation
-                num_restarts : Number of restarts
+            norm : Norm of attack
+            eps : Attack budget
+            step_size : Attack budget for each iteration
+            num_steps : Number of iterations
+            random_start : Randomly initialize image with perturbation
+            num_restarts : Number of restarts
+        verbose: Verbosity
     Output:
         perturbs : Perturbations for given batch
     """
@@ -83,13 +113,21 @@ def iterative_soft_attack(net, x, y_soft_vector, data_params, attack_params, opt
         perturb = torch.zeros_like(x, dtype=torch.float)
 
     if verbose:
-        iters = tqdm(range(attack_params["num_steps"]))
+        iters = tqdm(iterable=range(attack_params["num_steps"]),
+                     unit="step",
+                     leave=True)
     else:
         iters = range(attack_params["num_steps"])
 
     for _ in iters:
-        perturb += soft_attack_single_step(net, x+perturb,
-                                           y_soft_vector, data_params, attack_params, optimizer)
+        soft_attack_single_step_args = dict(net=net,
+                                            x=x+perturb,
+                                            y_soft_vector=y_soft_vector,
+                                            data_params=data_params,
+                                            attack_params={"norm": attack_params["norm"],
+                                                           "eps": attack_params["step_size"]})
+        perturb += soft_attack_single_step(**soft_attack_single_step_args)
+
         if attack_params["norm"] == "inf":
             perturb = torch.clamp(perturb, -attack_params["eps"], attack_params["eps"])
         else:

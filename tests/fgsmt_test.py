@@ -54,8 +54,8 @@ data_params = {"x_min": 0., "x_max": 1.}
 
 attack_args = dict(net=model,
                    data_params=data_params,
-                   eps=attack_params['eps'],
-                   norm="inf")
+                   attack_params=attack_params)
+
 attack_func = FGSM_targeted
 
 start_time = time.time()
