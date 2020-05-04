@@ -181,7 +181,7 @@ def initiate_mnist(dataset):
     # show_images(images, labels)
 
     model = CNN().to(device)
-    model.load_state_dict(torch.load("checkpoints/CNN.pt"))
+    model.load_state_dict(torch.load("checkpoints/CNN_adv_inf_0.3.pt"))
     test_loss, test_acc = test(model, test_loader)
     model.eval()
     print(f'Clean \t loss: {test_loss:.4f} \t acc: {test_acc:.4f}')
