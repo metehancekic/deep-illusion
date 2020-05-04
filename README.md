@@ -48,7 +48,7 @@ deep-illusion
 ## Dependencies #
 
 > numpy                     1.16.4\
-> tqdm                      4.31.1\
+> tqdm                      4.31.1
 
 **torchattacks**
 > pytorch                   1.4.0\
