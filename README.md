@@ -92,12 +92,13 @@ data_adversarial = data + perturbs
 
 ##### FGSM #####
 data_params = {"x_min": 0., "x_max": 1.}
+attack_params = {"norm": "inf",
+                 "eps": 8./255}
 fgsm_args = dict(net=model,
                  x=data,
                  y_true=target,
-                 eps=8.0/255,
-                 data_params=data_params
-                 norm="inf")
+                 data_params=data_params,
+                 attack_params=attack_params)
 perturbs = FGSM(**fgsm_args)
 data_adversarial = data + perturbs
 ```
@@ -106,4 +107,4 @@ data_adversarial = data + perturbs
 - pip install deepillusion --upgrade
 
 ## Current Version #
-0.0.5
+0.0.6
