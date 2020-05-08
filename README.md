@@ -107,4 +107,4 @@ data_adversarial = data + perturbs
 - pip install deepillusion --upgrade
 
 ## Current Version #
-0.0.6
+0.0.7
