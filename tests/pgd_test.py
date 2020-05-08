@@ -1,7 +1,7 @@
 import time
 import argparse
 
-from deepillusion.torchattacks import FGSM, FGSM_targeted, RFGSM, PGD, multiple_mean_PGD, BIM, soft_attack_single_step, iterative_soft_attack
+from deepillusion.torchattacks import FGSM, FGSM_targeted, RFGSM, PGD, ensemble_PGD, BIM, soft_attack_single_step, iterative_soft_attack
 
 from test_utils import initiate_cifar10, initiate_mnist, test_adversarial, save_image
 
@@ -55,7 +55,7 @@ data_params = {"x_min": 0., "x_max": 1.}
 attack_args = dict(net=model,
                    data_params=data_params,
                    attack_params=attack_params)
-attack_func = multiple_mean_PGD
+attack_func = ensemble_PGD
 
 # save_image(model, test_loader, attack_params,
 #            attack_args=attack_args, attack_func=attack_func)

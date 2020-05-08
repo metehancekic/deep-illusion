@@ -128,7 +128,7 @@ def PGD(net, x, y_true, data_params, attack_params, verbose=True):
     return perturbs
 
 
-def multiple_mean_PGD(net, x, y_true, data_params, attack_params, multiple_time=10, verbose=True):
+def ensemble_PGD(net, x, y_true, data_params, attack_params, ensemble_size=10, verbose=True):
     """
     Description: Projected Gradient Descent
         Madry et al
@@ -201,8 +201,8 @@ def multiple_mean_PGD(net, x, y_true, data_params, attack_params, multiple_time=
                              attack_params={"norm": attack_params["norm"],
                                             "eps": attack_params["step_size"]})
 
-            for _ in range(multiple_time):
-                perturb += FGSM(**fgsm_args) / multiple_time
+            for _ in range(ensemble_size):
+                perturb += FGSM(**fgsm_args) / ensemble_size
 
             # Clip perturbation if surpassed the norm bounds
             if attack_params["norm"] == "inf":

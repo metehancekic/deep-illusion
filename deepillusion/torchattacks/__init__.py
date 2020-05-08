@@ -2,7 +2,7 @@
 
 from ._fgsm import FGSM, FGSM_targeted
 from ._rfgsm import RFGSM
-from ._pgd import PGD, multiple_mean_PGD
+from ._pgd import PGD, ensemble_PGD
 from ._basic_iterative_method import BIM
 from ._soft_attacks import soft_attack_single_step, iterative_soft_attack
 from .._version import __version__
