@@ -202,9 +202,7 @@ def multiple_mean_PGD(net, x, y_true, data_params, attack_params, multiple_time=
                                             "eps": attack_params["step_size"]})
 
             for _ in range(multiple_time):
-                perturb += FGSM(**fgsm_args)
-
-            perturb /= multiple_time
+                perturb += FGSM(**fgsm_args) / multiple_time
 
             # Clip perturbation if surpassed the norm bounds
             if attack_params["norm"] == "inf":
