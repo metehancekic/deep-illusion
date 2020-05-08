@@ -26,7 +26,7 @@ import torch
 
 from ._fgsm import FGSM
 
-__all__ = ["PGD"]
+__all__ = ["PGD", "ensemble_PGD"]
 
 
 def PGD(net, x, y_true, data_params, attack_params, verbose=True):
