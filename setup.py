@@ -1,4 +1,7 @@
-from distutils.core import setup
+from setuptools import setup
+
+with open("README.md", "r") as fh:
+    long_description = fh.read()
 
 setup(
     name='deepillusion',
@@ -7,6 +10,8 @@ setup(
     version='0.0.7',
     license='MIT',
     description='Adversarial Machine Learning ToolBox',
+    long_description_content_type="text/markdown",
+    long_description=long_description,
     author='Metehan Cekic',
     author_email='metehancekic@ucsb.edu',
     url='https://github.com/metehancekic/deep-illusion.git',
