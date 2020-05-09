@@ -3,11 +3,18 @@ from setuptools import setup
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+version = {}
+with open("./deepillusion/_version.py") as fp:
+    exec(fp.read(), version)
+
+release_tag = "v_" + str(version['version_info'][0]) + \
+    str(version['version_info'][1]) + str(version['version_info'][2])
+
 setup(
     name='deepillusion',
     packages=['deepillusion', 'deepillusion.torchattacks', 'deepillusion.torchattacks.amp',
               'deepillusion.torchattacks.analysis', 'deepillusion.tfattacks', 'deepillusion.jaxattacks'],
-    version='0.0.7',
+    version=version['__version__'],
     license='MIT',
     description='Adversarial Machine Learning ToolBox',
     long_description_content_type="text/markdown",
@@ -15,7 +22,7 @@ setup(
     author='Metehan Cekic',
     author_email='metehancekic@ucsb.edu',
     url='https://github.com/metehancekic/deep-illusion.git',
-    download_url='https://github.com/metehancekic/deep-illusion/archive/v_007.tar.gz',
+    download_url='https://github.com/metehancekic/deep-illusion/archive/' + release_tag + '.tar.gz',
     keywords=['Adversarial', 'Attack', 'Pytorch'],
     install_requires=[
         'tqdm',
