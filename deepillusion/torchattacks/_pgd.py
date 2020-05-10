@@ -29,7 +29,7 @@ from ._fgsm import FGSM
 __all__ = ["PGD", "ensemble_PGD"]
 
 
-def PGD(net, x, y_true, data_params, attack_params, verbose=True):
+def PGD(net, x, y_true, data_params, attack_params, verbose=True, warn_gradient_masking=False):
     """
     Description: Projected Gradient Descent
         Madry et al
@@ -101,7 +101,8 @@ def PGD(net, x, y_true, data_params, attack_params, verbose=True):
                              y_true=y_true,
                              data_params=data_params,
                              attack_params={"norm": attack_params["norm"],
-                                            "eps": attack_params["step_size"]})
+                                            "eps": attack_params["step_size"]},
+                             warn_gradient_masking=warn_gradient_masking)
             perturb += FGSM(**fgsm_args)
 
             # Clip perturbation if surpassed the norm bounds
@@ -199,7 +200,8 @@ def ensemble_PGD(net, x, y_true, data_params, attack_params, ensemble_size=10, v
                              y_true=y_true,
                              data_params=data_params,
                              attack_params={"norm": attack_params["norm"],
-                                            "eps": attack_params["step_size"]})
+                                            "eps": attack_params["step_size"]},
+                             warn_gradient_masking=warn_gradient_masking)
 
             for _ in range(ensemble_size):
                 perturb += FGSM(**fgsm_args) / ensemble_size
