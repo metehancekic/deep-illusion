@@ -41,7 +41,7 @@ parser.add_argument('--momentum', type=float, default=0.5,
 parser.add_argument('--weight_decay', type=float, default=0.0005,
                     metavar='WD', help='Weight decay (default: 0.0005)')
 
-parser.add_argument("-tra", "--tr_attack", type=str, default="PGD", metavar="dn/fgsm/pgd",
+parser.add_argument("-tra", "--tr_attack", type=str, default="PGD", metavar="rfgsm/pgd",
                     help="Attack method")
 parser.add_argument("--attack", type=str, default="PGD", metavar="fgsm/pgd",
                     help="Attack method",
@@ -63,7 +63,7 @@ if args.dataset == "cifar":
     epochs = 20
 
 elif args.dataset == "mnist":
-    model, train_loader, test_loader = initiate_mnist(args.dataset)
+    model, train_loader, test_loader = initiate_mnist(args.dataset, random_model=True)
     attack_params = {
         "norm": "inf",
         "eps": 0.3,
@@ -109,14 +109,14 @@ adversarial_args = dict(attack=attacks[args.tr_attack],
                                          verbose=False))
 
 # Checkpoint Namer
-checkpoint_name = args.model
+checkpoint_name = args.dataset
 if adversarial_args["attack"]:
     for key in attack_params:
         checkpoint_name += "_" + str(key) + "_" + str(attack_params[key])
 checkpoint_name += ".pt"
 
 
-for epoch in range(1, args.epochs + 1):
+for epoch in range(1, epochs + 1):
 
     start_time = time.time()
     train_args = dict(model=model,
@@ -131,14 +131,13 @@ for epoch in range(1, args.epochs + 1):
     test_loss, test_acc = adversarial_test(**test_args)
     end_time = time.time()
 
-    print(f'{args.tr_attack} train \t loss: {train_loss:.4f} \t acc: {train_acc:.4f}\n')
+    print(f'{args.tr_attack} train \t loss: {train_loss:.4f} \t acc: {train_acc:.4f}\t duration {end_time-start_time:.1f} seconds')
     print(f'Test \t loss: {test_loss:.4f} \t acc: {test_acc:.4f}\n')
-    # print(f'{end_time - start time} seconds')
 
 
 if not os.path.exists("./checkpoints/"):
     os.makedirs("./checkpoints/")
-torch.save(model.state_dict(), args.directory + "checkpoints/" + checkpoint_name)
+torch.save(model.state_dict(), "./checkpoints/" + checkpoint_name)
 
 
 attack_params["random_start"] = False
