@@ -26,3 +26,7 @@ deepillusion/torchattacks/amp/_rfgsm.py
 deepillusion/torchattacks/amp/_soft_attacks.py
 deepillusion/torchattacks/analysis/__init__.py
 deepillusion/torchattacks/analysis/_perturbation_statistics.py
+deepillusion/torchdefenses/__init__.py
+deepillusion/torchdefenses/_adversarial_train_test.py
+deepillusion/torchdefenses/amp/__init__.py
+deepillusion/torchdefenses/amp/_adversarial_train_test.py
