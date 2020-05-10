@@ -10,4 +10,6 @@ from . import torchattacks
 from . import tfattacks
 from . import jaxattacks
 
-__all__ = ["__version__", "torchattacks", "tfattacks", "jaxattacks"]
+from . import torchdefenses
+
+__all__ = ["__version__", "torchattacks", "tfattacks", "jaxattacks", "torchdefenses"]
