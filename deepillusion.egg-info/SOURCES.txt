@@ -19,6 +19,7 @@ deepillusion/torchattacks/_rfgsm.py
 deepillusion/torchattacks/_soft_attacks.py
 deepillusion/torchattacks/_utils.py
 deepillusion/torchattacks/amp/__init__.py
+deepillusion/torchattacks/amp/_basic_iterative_method.py
 deepillusion/torchattacks/amp/_fgsm.py
 deepillusion/torchattacks/amp/_pgd.py
 deepillusion/torchattacks/amp/_rfgsm.py

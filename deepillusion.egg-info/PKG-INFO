@@ -1,12 +1,12 @@
 Metadata-Version: 2.1
 Name: deepillusion
-Version: 0.0.7
+Version: 0.0.8
 Summary: Adversarial Machine Learning ToolBox
 Home-page: https://github.com/metehancekic/deep-illusion.git
 Author: Metehan Cekic
 Author-email: metehancekic@ucsb.edu
 License: MIT
-Download-URL: https://github.com/metehancekic/deep-illusion/archive/v_007.tar.gz
+Download-URL: https://github.com/metehancekic/deep-illusion/archive/v_008.tar.gz
 Description: ![alt text][logo]
         
         [logo]: https://github.com/metehancekic/deep-illusion/blob/master/figs/confused-ai.png
@@ -116,7 +116,7 @@ Description: ![alt text][logo]
         - pip install deepillusion --upgrade
         
         ## Current Version #
-        0.0.6
+        0.0.7
         
 Keywords: Adversarial,Attack,Pytorch
 Platform: UNKNOWN

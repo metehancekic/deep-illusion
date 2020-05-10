@@ -22,7 +22,7 @@ from ._utils import clip
 __all__ = ["RFGSM"]
 
 
-def RFGSM(net, x, y_true, data_params, attack_params, vervose=False):
+def RFGSM(net, x, y_true, data_params, attack_params, verbose=False):
     """
     Description: Random + Fast Gradient Sign Method
     Input :

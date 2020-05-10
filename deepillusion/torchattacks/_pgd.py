@@ -29,7 +29,7 @@ from ._fgsm import FGSM
 __all__ = ["PGD", "ensemble_PGD"]
 
 
-def PGD(net, x, y_true, data_params, attack_params, verbose=True, warn_gradient_masking=False):
+def PGD(net, x, y_true, data_params, attack_params, verbose=False, warn_gradient_masking=False):
     """
     Description: Projected Gradient Descent
         Madry et al
@@ -129,7 +129,7 @@ def PGD(net, x, y_true, data_params, attack_params, verbose=True, warn_gradient_
     return perturbs
 
 
-def ensemble_PGD(net, x, y_true, data_params, attack_params, ensemble_size=10, verbose=True):
+def ensemble_PGD(net, x, y_true, data_params, attack_params, ensemble_size=10, verbose=False, warn_gradient_masking=False):
     """
     Description: Projected Gradient Descent
         Madry et al

@@ -26,7 +26,7 @@ from ._fgsm import FGSM
 __all__ = ["BIM"]
 
 
-def BIM(net, x, y_true, data_params, attack_params, verbose=True):
+def BIM(net, x, y_true, data_params, attack_params, verbose=False):
     """
     Description: Basic Iterative Method
     Input :
