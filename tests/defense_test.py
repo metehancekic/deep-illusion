@@ -133,7 +133,7 @@ for epoch in range(1, args.epochs + 1):
 
     print(f'{args.tr_attack} train \t loss: {train_loss:.4f} \t acc: {train_acc:.4f}\n')
     print(f'Test \t loss: {test_loss:.4f} \t acc: {test_acc:.4f}\n')
-    print(f'{end_time - start time} seconds')
+    # print(f'{end_time - start time} seconds')
 
 
 if not os.path.exists("./checkpoints/"):

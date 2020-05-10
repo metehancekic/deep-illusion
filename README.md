@@ -31,6 +31,12 @@ deep-illusion
 |   |   └───analysis
 |   |       │   _perturbation_statistics     Perturbations statistics functions
 |   |
+|   |───torchdefenses
+│   |   |   _adversarial_train_test.py       Adversarial Training - Adversarial Testing
+|   |   │   
+|   |   |───amp
+|   |   |   │   _adversarial_train_test.py     Adversarial Training - Adversarial Testing (Mixed Precision)
+|   |
 |   |───tfattacks
 |   |   |
 |   |
@@ -107,4 +113,4 @@ data_adversarial = data + perturbs
 - pip install deepillusion --upgrade
 
 ## Current Version #
-0.0.7
+0.1.2
