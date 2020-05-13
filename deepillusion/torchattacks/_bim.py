@@ -1,6 +1,5 @@
 """
-Description: Projected Gradient Descent
-Madry
+Description: Basic Iterative Method
 
 Example Use:
 
@@ -13,9 +12,10 @@ bim_args = dict(net=model,
                                "eps": 8./255,
                                "step_size": 2./255,
                                "num_steps": 7},
-                verbose=False)
-perturbs = BIM(**bim_args)
-data_adversarial = data + perturbs
+                verbose=False,
+                progress_bar=False)
+perturbation = BIM(**bim_args)
+data_adversarial = data + perturbation
 """
 
 from tqdm import tqdm
@@ -26,7 +26,7 @@ from ._fgsm import FGSM
 __all__ = ["BIM"]
 
 
-def BIM(net, x, y_true, data_params, attack_params, verbose=False):
+def BIM(net, x, y_true, data_params, attack_params, verbose=False, ):
     """
     Description: Basic Iterative Method
     Input :
@@ -41,9 +41,10 @@ def BIM(net, x, y_true, data_params, attack_params, verbose=False):
                 eps : Attack budget                                 (Float)
                 step_size : Attack budget for each iteration        (Float)
                 num_steps : Number of iterations                    (Int)
-        verbose: Verbosity                                          (Bool)
+        verbose: check gradient masking                             (Bool)
+        progress_bar: Put progress bar                              (Bool)
     Output:
-        perturbs : Perturbations for given batch
+        perturbation : Perturbations for given batch
 
     Explanation:
         e = zeros() or e = uniform(-eps,eps)
@@ -55,10 +56,10 @@ def BIM(net, x, y_true, data_params, attack_params, verbose=False):
     for p in net.parameters():
         p.requires_grad = False
 
-    perturb = torch.zeros_like(x, dtype=torch.float)
+    perturbation = torch.zeros_like(x, dtype=torch.float)
 
-    # Adding progress bar for iterations if verbose = True
-    if verbose:
+    # Adding progress bar for iterations if progress_bar = True
+    if progress_bar:
         iters = tqdm(
             iterable=range(attack_params["num_steps"]),
             unit="step",
@@ -68,22 +69,23 @@ def BIM(net, x, y_true, data_params, attack_params, verbose=False):
 
     for _ in iters:
         fgsm_args = dict(net=net,
-                         x=x+perturb,
+                         x=x+perturbation,
                          y_true=y_true,
                          data_params=data_params,
                          attack_params={"norm": attack_params["norm"],
-                                        "eps": attack_params["step_size"]})
-        perturb += FGSM(**fgsm_args)
+                                        "eps": attack_params["step_size"]},
+                         verbose=verbose)
+        perturbation += FGSM(**fgsm_args)
 
         # Clip perturbation if surpassed the norm bounds
         if attack_params["norm"] == "inf":
-            perturb = torch.clamp(perturb, -attack_params["eps"], attack_params["eps"])
+            perturbation = torch.clamp(perturbation, -attack_params["eps"], attack_params["eps"])
         else:
-            perturb = (perturb * attack_params["eps"] /
-                       perturb.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1))
+            perturbation = (perturbation * attack_params["eps"] /
+                            perturbation.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1))
 
     # set back to True
     for p in net.parameters():
         p.requires_grad = True
 
-    return perturb
+    return perturbation

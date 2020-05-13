@@ -1,7 +1,7 @@
 import time
 import argparse
 
-from deepillusion.torchattacks import FGSM, FGSM_targeted, RFGSM, PGD, ensemble_PGD, BIM, soft_attack_single_step, iterative_soft_attack
+from deepillusion.torchattacks import FGSM, FGSM_targeted, RFGSM, PGD, ePGD, BIM, soft_attack_single_step, iterative_soft_attack
 
 from test_utils import initiate_cifar10, initiate_mnist, test_adversarial, save_image
 
@@ -48,14 +48,17 @@ elif args.dataset == "fashion":
         "num_steps": 100,
         "random_start": False,
         "num_restarts": 1,
+        "ensemble_size": 2,
         }
 
 data_params = {"x_min": 0., "x_max": 1.}
 
 attack_args = dict(net=model,
                    data_params=data_params,
-                   attack_params=attack_params)
-attack_func = ensemble_PGD
+                   attack_params=attack_params,
+                   verbose=False,
+                   progress_bar=True)
+attack_func = ePGD
 
 # save_image(model, test_loader, attack_params,
 #            attack_args=attack_args, attack_func=attack_func)

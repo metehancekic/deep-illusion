@@ -16,7 +16,9 @@ perturbation = RFGSM(**rfgsm_args)
 
 import torch
 from torch import nn
+from warnings import warn
 
+from .._utils import GradientMaskingWarning, GradientMaskingError
 from ._utils import clip
 
 __all__ = ["RFGSM"]
@@ -36,6 +38,7 @@ def RFGSM(net, x, y_true, data_params, attack_params, verbose=False):
             norm:   Attack norm         (Str)
             eps:    Attack budget       (Float)
             alpha:  Attack step size    (Float)
+        verbose: Check for gradient masking                         (Bool)
     Output:
         perturbation : Single step perturbation (Clamped with input limits)
 
@@ -64,6 +67,12 @@ def RFGSM(net, x, y_true, data_params, attack_params, verbose=False):
     # Calculating backprop for images
     loss.backward(gradient=torch.ones_like(y_true, dtype=torch.float), retain_graph=True)
     e_grad = e.grad.data
+
+    if verbose:
+        # To make sure Gradient Masking is not happening
+        max_attack_for_each_image, _ = e_grad.abs().view(e.size(0), -1).max(dim=1)
+        if max_attack_for_each_image.min() <= 0:
+            warn("Gradient Masking is happening for some images!!!!!", GradientMaskingWarning)
 
     if attack_params["norm"] == "inf":
         perturbation = torch.clamp(

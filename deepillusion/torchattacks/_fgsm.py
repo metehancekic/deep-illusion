@@ -36,7 +36,7 @@ from ._utils import clip
 __all__ = ["FGSM", "FGSM_targeted"]
 
 
-def FGSM(net, x, y_true, data_params, attack_params, verbose=False, warn_gradient_masking=False):
+def FGSM(net, x, y_true, data_params, attack_params, verbose=False):
     """
     Description: Fast gradient sign method
         Goodfellow [https://arxiv.org/abs/1412.6572]
@@ -50,6 +50,7 @@ def FGSM(net, x, y_true, data_params, attack_params, verbose=False, warn_gradien
         attack_params : Attack parameters as a dictionary           (dict)
             norm : Norm of attack                                   (Str)
             eps : Attack budget                                     (Float)
+        verbose: Check for gradient masking                         (Bool)
     Output:
         perturbation : Single step perturbation (Clamped with input limits)
 
@@ -71,12 +72,12 @@ def FGSM(net, x, y_true, data_params, attack_params, verbose=False, warn_gradien
     # Calculating backprop for images
     loss.backward(gradient=torch.ones_like(y_true, dtype=torch.float), retain_graph=True)
     e_grad = e.grad.data
-    # To make sure Gradient Masking is not happening
-    max_attack_for_each_image, _ = e_grad.abs().view(e.size(0), -1).max(dim=1)
 
-    if warn_gradient_masking:
+    if verbose:
+        # To make sure Gradient Masking is not happening
+        max_attack_for_each_image, _ = e_grad.abs().view(e.size(0), -1).max(dim=1)
         if max_attack_for_each_image.min() <= 0:
-            warn("Using amp versions can cause gradient masking issue for overconfident models (i.e models for MNIST dataset)", GradientMaskingWarning)
+            warn("Gradient Masking is happening for some images!!!!!", GradientMaskingWarning)
 
     if attack_params["norm"] == "inf":
         perturbation = attack_params["eps"] * e_grad.sign()
@@ -86,11 +87,10 @@ def FGSM(net, x, y_true, data_params, attack_params, verbose=False, warn_gradien
 
     # Clipping perturbations so that  x_min < image + perturbation < x_max
     perturbation.data = clip(perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
-    assert (x+perturbation).min() >= 0 and (x+perturbation).max() <= 1
     return perturbation
 
 
-def FGSM_targeted(net, x, y_target, data_params, attack_params, verbose=False, warn_gradient_masking=False):
+def FGSM_targeted(net, x, y_target, data_params, attack_params, verbose=False):
     """
     Description: Fast gradient sign method
         Goodfellow [https://arxiv.org/abs/1412.6572]
@@ -104,6 +104,7 @@ def FGSM_targeted(net, x, y_target, data_params, attack_params, verbose=False, w
         attack_params : Attack parameters as a dictionary           (dict)
             norm : Norm of attack                                   (Str)
             eps : Attack budget                                     (Float)
+        verbose: Check for gradient masking                         (Bool)
     Output:
         perturbation : Single step perturbation (Clamped with input limits)
 
@@ -125,12 +126,12 @@ def FGSM_targeted(net, x, y_target, data_params, attack_params, verbose=False, w
     # Calculating backprop for images
     loss.backward(gradient=torch.ones_like(y_target, dtype=torch.float), retain_graph=True)
     e_grad = e.grad.data
-    # To make sure Gradient Masking is not happening
-    max_attack_for_each_image, _ = e_grad.abs().view(e.size(0), -1).max(dim=1)
 
-    if warn_gradient_masking:
+    if verbose:
+        # To make sure Gradient Masking is not happening
+        max_attack_for_each_image, _ = e_grad.abs().view(e.size(0), -1).max(dim=1)
         if max_attack_for_each_image.min() <= 0:
-            warn("Using amp versions can cause gradient masking issue for overconfident models (i.e models for MNIST dataset)", GradientMaskingWarning)
+            warn("Gradient Masking is happening for some images!!!!!", GradientMaskingWarning)
 
     if attack_params["norm"] == "inf":
         perturbation = -attack_params["eps"] * e_grad.sign()
@@ -140,6 +141,5 @@ def FGSM_targeted(net, x, y_target, data_params, attack_params, verbose=False, w
 
     # Clipping perturbations so that  x_min < image + perturbation < x_max
     perturbation.data = clip(perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
-    assert (x+perturbation).min() >= 0 and (x+perturbation).max() <= 1
 
     return perturbation

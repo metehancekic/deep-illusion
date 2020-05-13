@@ -15,9 +15,10 @@ pgd_args = dict(net=model,
                                "num_steps": 7,
                                "random_start": False,
                                "num_restarts": 1},
-                verbose=False)
-perturbs = PGD(**pgd_args)
-data_adversarial = data + perturbs
+                verbose=False,
+                progress_bar=False)
+best_perturbation = PGD(**pgd_args)
+data_adversarial = data + best_perturbation
 
 """
 
@@ -29,27 +30,28 @@ from ._fgsm import FGSM
 __all__ = ["PGD", "ensemble_PGD"]
 
 
-def PGD(net, x, y_true, data_params, attack_params, verbose=False, warn_gradient_masking=False):
+def PGD(net, x, y_true, data_params, attack_params, verbose=False, progress_bar=False):
     """
     Description: Projected Gradient Descent
         Madry et al
     Input :
-        net : Neural Network            (torch.nn.Module)
-        x : Inputs to the net           (Batch)
-        y_true : Labels                 (Batch)
-        verbose: Verbosity              (Bool)
+        net : Neural Network                (torch.nn.Module)
+        x : Inputs to the net               (Batch)
+        y_true : Labels                     (Batch)
         data_params :
             x_min:  Minimum possible value of x (min pixel value)   (Float)
             x_max:  Maximum possible value of x (max pixel value)   (Float)
         attack_params : Attack parameters as a dictionary
-                norm : Norm of attack                               (Str)
-                eps : Attack budget                                 (Float)
-                step_size : Attack budget for each iteration        (Float)
-                num_steps : Number of iterations                    (Int)
-                random_start : Randomly initialize image with perturbation  (Bool)
-                num_restarts : Number of restarts                           (Int)
+            norm : Norm of attack                               (Str)
+            eps : Attack budget                                 (Float)
+            step_size : Attack budget for each iteration        (Float)
+            num_steps : Number of iterations                    (Int)
+            random_start : Randomly initialize image with perturbation  (Bool)
+            num_restarts : Number of restarts                           (Int)
+        verbose: check gradient masking     (Bool)
+        progress_bar: Put progress bar      (Bool)
     Output:
-        perturbs : Perturbations for given batch
+        best_perturbation : Perturbations for given batch
 
     Explanation:
         e = zeros() or e = uniform(-eps,eps)
@@ -61,10 +63,10 @@ def PGD(net, x, y_true, data_params, attack_params, verbose=False, warn_gradient
     for p in net.parameters():
         p.requires_grad = False
 
-    perturbs = torch.zeros_like(x)
+    best_perturbation = torch.zeros_like(x)
 
-    # Adding progress bar for random-restarts if verbose = True
-    if verbose and attack_params["num_restarts"] > 1:
+    # Adding progress bar for random-restarts if progress_bar = True
+    if progress_bar and attack_params["num_restarts"] > 1:
         restarts = tqdm(
             iterable=range(attack_params["num_restarts"]),
             unit="restart",
@@ -77,17 +79,17 @@ def PGD(net, x, y_true, data_params, attack_params, verbose=False, warn_gradient
         # Randomly initialize perturbation if needed
         if attack_params["random_start"] or attack_params["num_restarts"] > 1:
             if attack_params["norm"] == "inf":
-                perturb = (2 * torch.rand_like(x) - 1) * attack_params["eps"]
+                perturbation = (2 * torch.rand_like(x) - 1) * attack_params["eps"]
             else:
                 e = 2 * torch.rand_like(x) - 1
-                perturb = e * attack_params["eps"] / \
+                perturbation = e * attack_params["eps"] / \
                     e.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1)
 
         else:
-            perturb = torch.zeros_like(x, dtype=torch.float)
+            perturbation = torch.zeros_like(x, dtype=torch.float)
 
-        # Adding progress bar for iterations if verbose = True
-        if verbose:
+        # Adding progress bar for iterations if progress_bar = True
+        if progress_bar:
             iters = tqdm(
                 iterable=range(attack_params["num_steps"]),
                 unit="step",
@@ -97,59 +99,62 @@ def PGD(net, x, y_true, data_params, attack_params, verbose=False, warn_gradient
 
         for _ in iters:
             fgsm_args = dict(net=net,
-                             x=x+perturb,
+                             x=x+perturbation,
                              y_true=y_true,
                              data_params=data_params,
                              attack_params={"norm": attack_params["norm"],
                                             "eps": attack_params["step_size"]},
-                             warn_gradient_masking=warn_gradient_masking)
-            perturb += FGSM(**fgsm_args)
+                             verbose=verbose)
+            perturbation += FGSM(**fgsm_args)
 
             # Clip perturbation if surpassed the norm bounds
             if attack_params["norm"] == "inf":
-                perturb = torch.clamp(perturb, -attack_params["eps"], attack_params["eps"])
+                perturbation = torch.clamp(
+                    perturbation, -attack_params["eps"], attack_params["eps"])
             else:
-                perturb = (perturb * attack_params["eps"] /
-                           perturb.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1))
+                perturbation = (perturbation * attack_params["eps"] /
+                                perturbation.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1))
 
         # Use the best perturbations among all restarts which fooled neural network
         if i == 0:
-            perturbs = perturb.data
+            best_perturbation = perturbation.data
         else:
-            output = net(torch.clamp(x + perturb, data_params["x_min"], data_params["x_max"]))
+            output = net(torch.clamp(x + perturbation, data_params["x_min"], data_params["x_max"]))
             y_hat = output.argmax(dim=1, keepdim=True)
 
             fooled_indices = (y_hat != y_true.view_as(y_hat)).nonzero()
-            perturbs[fooled_indices] = perturb[fooled_indices].data
+            best_perturbation[fooled_indices] = perturbation[fooled_indices].data
 
     # set back to True
     for p in net.parameters():
         p.requires_grad = True
 
-    return perturbs
+    return best_perturbation
 
 
-def ensemble_PGD(net, x, y_true, data_params, attack_params, ensemble_size=10, verbose=False, warn_gradient_masking=False):
+def ePGD(net, x, y_true, data_params, attack_params, verbose=False, progress_bar=False):
     """
-    Description: Projected Gradient Descent
-        Madry et al
+    Description: Ensemble Projected Gradient Descent
+        EOT paper
     Input :
         net : Neural Network            (torch.nn.Module)
         x : Inputs to the net           (Batch)
         y_true : Labels                 (Batch)
-        verbose: Verbosity              (Bool)
         data_params :
             x_min:  Minimum possible value of x (min pixel value)   (Float)
             x_max:  Maximum possible value of x (max pixel value)   (Float)
         attack_params : Attack parameters as a dictionary
-                norm : Norm of attack                               (Str)
-                eps : Attack budget                                 (Float)
-                step_size : Attack budget for each iteration        (Float)
-                num_steps : Number of iterations                    (Int)
-                random_start : Randomly initialize image with perturbation  (Bool)
-                num_restarts : Number of restarts                           (Int)
+            norm : Norm of attack                               (Str)
+            eps : Attack budget                                 (Float)
+            step_size : Attack budget for each iteration        (Float)
+            num_steps : Number of iterations                    (Int)
+            random_start : Randomly initialize image with perturbation  (Bool)
+            num_restarts : Number of restarts                           (Int)
+            ensemble_size: Ensemble size                                (Int)
+        verbose: check gradient masking     (Bool)
+        progress_bar: Put progress bar      (Bool)
     Output:
-        perturbs : Perturbations for given batch
+        best_perturbation : Perturbations for given batch
 
     Explanation:
         e = zeros() or e = uniform(-eps,eps)
@@ -161,10 +166,10 @@ def ensemble_PGD(net, x, y_true, data_params, attack_params, ensemble_size=10, v
     for p in net.parameters():
         p.requires_grad = False
 
-    perturbs = torch.zeros_like(x)
+    best_perturbation = torch.zeros_like(x)
 
-    # Adding progress bar for random-restarts if verbose = True
-    if verbose and attack_params["num_restarts"] > 1:
+    # Adding progress bar for random-restarts if progress_bar = True
+    if progress_bar and attack_params["num_restarts"] > 1:
         restarts = tqdm(
             iterable=range(attack_params["num_restarts"]),
             unit="restart",
@@ -176,17 +181,17 @@ def ensemble_PGD(net, x, y_true, data_params, attack_params, ensemble_size=10, v
         # Randomly initialize perturbation if needed
         if attack_params["random_start"] or attack_params["num_restarts"] > 1:
             if attack_params["norm"] == "inf":
-                perturb = (2 * torch.rand_like(x) - 1) * attack_params["eps"]
+                perturbation = (2 * torch.rand_like(x) - 1) * attack_params["eps"]
             else:
                 e = 2 * torch.rand_like(x) - 1
-                perturb = e * attack_params["eps"] / \
+                perturbation = e * attack_params["eps"] / \
                     e.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1)
 
         else:
-            perturb = torch.zeros_like(x, dtype=torch.float)
+            perturbation = torch.zeros_like(x, dtype=torch.float)
 
-        # Adding progress bar for iterations if verbose = True
-        if verbose:
+        # Adding progress bar for iterations if progress_bar = True
+        if progress_bar:
             iters = tqdm(
                 iterable=range(attack_params["num_steps"]),
                 unit="step",
@@ -196,35 +201,44 @@ def ensemble_PGD(net, x, y_true, data_params, attack_params, ensemble_size=10, v
 
         for _ in iters:
             fgsm_args = dict(net=net,
-                             x=x+perturb,
+                             x=x+perturbation,
                              y_true=y_true,
                              data_params=data_params,
                              attack_params={"norm": attack_params["norm"],
                                             "eps": attack_params["step_size"]},
-                             warn_gradient_masking=warn_gradient_masking)
+                             verbose=verbose)
 
-            for _ in range(ensemble_size):
-                perturb += FGSM(**fgsm_args) / ensemble_size
+            # Adding progress bar for ensemble if progress_bar = True
+            if progress_bar:
+                ensemble = tqdm(
+                    iterable=range(attack_params["ensemble_size"]),
+                    unit="element",
+                    leave=True)
+            else:
+                ensemble = range(attack_params["ensemble_size"])
+            for _ in ensemble:
+                perturbation += FGSM(**fgsm_args) / attack_params["ensemble_size"]
 
             # Clip perturbation if surpassed the norm bounds
             if attack_params["norm"] == "inf":
-                perturb = torch.clamp(perturb, -attack_params["eps"], attack_params["eps"])
+                perturbation = torch.clamp(
+                    perturbation, -attack_params["eps"], attack_params["eps"])
             else:
-                perturb = (perturb * attack_params["eps"] /
-                           perturb.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1))
+                perturbation = (perturbation * attack_params["eps"] /
+                                perturbation.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1))
 
         # Use the best perturbations among all restarts which fooled neural network
         if i == 0:
-            perturbs = perturb.data
+            best_perturbation = perturbation.data
         else:
-            output = net(torch.clamp(x + perturb, data_params["x_min"], data_params["x_max"]))
+            output = net(torch.clamp(x + perturbation, data_params["x_min"], data_params["x_max"]))
             y_hat = output.argmax(dim=1, keepdim=True)
 
             fooled_indices = (y_hat != y_true.view_as(y_hat)).nonzero()
-            perturbs[fooled_indices] = perturb[fooled_indices].data
+            best_perturbation[fooled_indices] = perturbation[fooled_indices].data
 
     # set back to True
     for p in net.parameters():
         p.requires_grad = True
 
-    return perturbs
+    return best_perturbation
