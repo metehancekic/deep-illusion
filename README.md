@@ -20,6 +20,7 @@ deep-illusion
 |   |   │   _fgsm.py                     Fast Gradient Sign Method
 |   |   │   _rfgsm.py                    Random Start + Fast Gradient Sign Method
 |   |   │   _pgd.py                      Projected Gradient Descent
+|   |   │   _bim.py                      Basic Iterative Method
 |   |   │   _soft_attacks.py             Soft attack functions
 |   |   │ 
 |   |   |───amp
@@ -35,7 +36,7 @@ deep-illusion
 │   |   |   _adversarial_train_test.py       Adversarial Training - Adversarial Testing
 |   |   │   
 |   |   |───amp
-|   |   |   │   _adversarial_train_test.py     Adversarial Training - Adversarial Testing (Mixed Precision)
+|   |   |   │   _adversarial_train_test.py     Mixed Precision (Faster) - Adversarial Training - Adversarial Testing 
 |   |
 |   |───tfattacks
 |   |   |
@@ -92,7 +93,8 @@ pgd_args = dict(net=model,
                 y_true=target,
                 data_params=data_params,
                 attack_params=attack_params,
-                verbose=False)               
+                verbose=False,
+                progress_bar=False)               
 perturbs = PGD(**pgd_args)
 data_adversarial = data + perturbs
 
@@ -113,4 +115,4 @@ data_adversarial = data + perturbs
 - pip install deepillusion --upgrade
 
 ## Current Version #
-0.1.3
+0.1.4

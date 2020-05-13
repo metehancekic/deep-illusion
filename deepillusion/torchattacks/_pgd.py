@@ -27,7 +27,7 @@ import torch
 
 from ._fgsm import FGSM
 
-__all__ = ["PGD", "ensemble_PGD"]
+__all__ = ["PGD", "ePGD"]
 
 
 def PGD(net, x, y_true, data_params, attack_params, verbose=False, progress_bar=False):
@@ -70,7 +70,7 @@ def PGD(net, x, y_true, data_params, attack_params, verbose=False, progress_bar=
         restarts = tqdm(
             iterable=range(attack_params["num_restarts"]),
             unit="restart",
-            leave=True)
+            leave=False)
     else:
         restarts = range(attack_params["num_restarts"])
 
@@ -93,7 +93,7 @@ def PGD(net, x, y_true, data_params, attack_params, verbose=False, progress_bar=
             iters = tqdm(
                 iterable=range(attack_params["num_steps"]),
                 unit="step",
-                leave=True)
+                leave=False)
         else:
             iters = range(attack_params["num_steps"])
 
@@ -173,7 +173,7 @@ def ePGD(net, x, y_true, data_params, attack_params, verbose=False, progress_bar
         restarts = tqdm(
             iterable=range(attack_params["num_restarts"]),
             unit="restart",
-            leave=True)
+            leave=False)
     else:
         restarts = range(attack_params["num_restarts"])
 
@@ -195,7 +195,7 @@ def ePGD(net, x, y_true, data_params, attack_params, verbose=False, progress_bar
             iters = tqdm(
                 iterable=range(attack_params["num_steps"]),
                 unit="step",
-                leave=True)
+                leave=False)
         else:
             iters = range(attack_params["num_steps"])
 
@@ -213,7 +213,7 @@ def ePGD(net, x, y_true, data_params, attack_params, verbose=False, progress_bar
                 ensemble = tqdm(
                     iterable=range(attack_params["ensemble_size"]),
                     unit="element",
-                    leave=True)
+                    leave=False)
             else:
                 ensemble = range(attack_params["ensemble_size"])
             for _ in ensemble:

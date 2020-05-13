@@ -12,14 +12,14 @@ deepillusion.egg-info/top_level.txt
 deepillusion/jaxattacks/__init__.py
 deepillusion/tfattacks/__init__.py
 deepillusion/torchattacks/__init__.py
-deepillusion/torchattacks/_basic_iterative_method.py
+deepillusion/torchattacks/_bim.py
 deepillusion/torchattacks/_fgsm.py
 deepillusion/torchattacks/_pgd.py
 deepillusion/torchattacks/_rfgsm.py
 deepillusion/torchattacks/_soft_attacks.py
 deepillusion/torchattacks/_utils.py
 deepillusion/torchattacks/amp/__init__.py
-deepillusion/torchattacks/amp/_basic_iterative_method.py
+deepillusion/torchattacks/amp/_bim.py
 deepillusion/torchattacks/amp/_fgsm.py
 deepillusion/torchattacks/amp/_pgd.py
 deepillusion/torchattacks/amp/_rfgsm.py

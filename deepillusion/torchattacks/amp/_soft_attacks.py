@@ -69,59 +69,62 @@ def soft_attack_single_step(net, x, y_soft_vector, data_params, attack_params, o
                               1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1)
 
     perturbation.data = clip(perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
-    assert (x+perturbation).min() >= 0 and (x+perturbation).max() <= 1
     return perturbation
 
 
-def iterative_soft_attack(net, x, y_soft_vector, data_params, attack_params, optimizer=None, verbose=False):
+def iterative_soft_attack(net, x, y_soft_vector, data_params, attack_params, optimizer=None, verbose=False, progress_bar=False):
     """
     Input :
         net : Neural Network (Classifier)
         x : Inputs to the net
         y_true : Labels
         data_params: Data parameters as dictionary
-                x_min : Minimum legal value for elements of x
-                x_max : Maximum legal value for elements of x
+            x_min : Minimum legal value for elements of x
+            x_max : Maximum legal value for elements of x
         attack_params : Attack parameters as a dictionary
-                norm : Norm of attack
-                eps : Attack budget
-                step_size : Attack budget for each iteration
-                num_steps : Number of iterations
-                random_start : Randomly initialize image with perturbation
-                num_restarts : Number of restarts
+            norm : Norm of attack
+            eps : Attack budget
+            step_size : Attack budget for each iteration
+            num_steps : Number of iterations
+        verbose: Verbosity
+        progress_bar : Progress bar
     Output:
-        perturbs : Perturbations for given batch
+        perturbation : Perturbations for given batch
     """
 
     # fooled_indices = np.array(y_true.shape[0])
-    perturb = torch.zeros_like(x)
+    perturbation = torch.zeros_like(x)
 
     if attack_params["random_start"]:
         if attack_params["norm"] == "inf":
-            perturb = (2 * torch.rand_like(x) - 1) * attack_params["eps"]
+            perturbation = (2 * torch.rand_like(x) - 1) * attack_params["eps"]
         else:
             e = 2 * torch.rand_like(x) - 1
-            perturb = e * attack_params["eps"] / \
+            perturbation = e * attack_params["eps"] / \
                 e.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1)
 
     else:
-        perturb = torch.zeros_like(x, dtype=torch.float)
+        perturbation = torch.zeros_like(x, dtype=torch.float)
 
-    if verbose:
-        iters = tqdm(range(attack_params["num_steps"]))
+    if progress_bar:
+        iters = tqdm(
+            iterable=range(attack_params["num_steps"]),
+            unit="step",
+            leave=False)
     else:
         iters = range(attack_params["num_steps"])
 
     for _ in iters:
-        perturb += soft_attack_single_step(net, x+perturb,
-                                           y_soft_vector, data_params, attack_params, optimizer)
+        perturbation += soft_attack_single_step(net, x+perturbation,
+                                                y_soft_vector, data_params, attack_params, optimizer)
         if attack_params["norm"] == "inf":
-            perturb = torch.clamp(perturb, -attack_params["eps"], attack_params["eps"])
+            perturbation = torch.clamp(perturbation, -attack_params["eps"], attack_params["eps"])
         else:
-            perturb = (perturb * attack_params["eps"] /
-                       perturb.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1))
+            perturbation = (perturbation * attack_params["eps"] /
+                            perturbation.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1))
 
-        out = torch.nn.functional.softmax(net(x+perturb))
-        print(out[0])
+        if verbose:
+            out = torch.nn.functional.softmax(net(x+perturbation))
+            print(out[0])
 
-    return perturb
+    return perturbation

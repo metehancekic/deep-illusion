@@ -63,7 +63,7 @@ def BIM(net, x, y_true, data_params, attack_params, verbose=False, progress_bar=
         iters = tqdm(
             iterable=range(attack_params["num_steps"]),
             unit="step",
-            leave=True)
+            leave=False)
     else:
         iters = range(attack_params["num_steps"])
 
