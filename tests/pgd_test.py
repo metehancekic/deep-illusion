@@ -48,8 +48,9 @@ elif args.dataset == "fashion":
         "num_steps": 100,
         "random_start": False,
         "num_restarts": 1,
-        "ensemble_size": 2,
         }
+
+attack_params["ensemble_size"] = 2
 
 data_params = {"x_min": 0., "x_max": 1.}
 
@@ -58,7 +59,7 @@ attack_args = dict(net=model,
                    attack_params=attack_params,
                    verbose=False,
                    progress_bar=True)
-attack_func = ePGD
+attack_func = PGD
 
 # save_image(model, test_loader, attack_params,
 #            attack_args=attack_args, attack_func=attack_func)
