@@ -330,6 +330,8 @@ def PEGD(net, x, y_true, data_params, attack_params, verbose=False, progress_bar
                     leave=False)
             else:
                 ensemble = range(attack_params["ensemble_size"])
+
+            expected_grad = 0
             for _ in ensemble:
                 e_grad = FGM(**fgm_args)
                 e_grad = e_grad / e_grad.view(x.shape[0], -1).norm(p=2, dim=-1).view(-1, 1, 1, 1)
