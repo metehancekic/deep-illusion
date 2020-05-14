@@ -339,10 +339,14 @@ def PEGD(net, x, y_true, data_params, attack_params, verbose=False, progress_bar
 
             # Clip perturbation if surpassed the norm bounds
             if attack_params["norm"] == "inf":
-                perturbation += attack_params["eps"] * expected_grad.sign()
+                perturbation += attack_params["step_size"] * expected_grad.sign()
+                perturbation = torch.clamp(
+                    perturbation, -attack_params["eps"], attack_params["eps"])
             else:
-                perturbation += (expected_grad * attack_params["eps"] /
+                perturbation += (expected_grad * attack_params["step_size"] /
                                  expected_grad.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1))
+                perturbation = (perturbation * attack_params["eps"] /
+                                perturbation.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1))
 
         # Use the best perturbations among all restarts which fooled neural network
         if i == 0:
