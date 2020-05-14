@@ -33,7 +33,7 @@ from warnings import warn
 from .._utils import GradientMaskingWarning, GradientMaskingError
 from ._utils import clip
 
-__all__ = ["FGSM", "FGSM_targeted"]
+__all__ = ["FGSM", "FGSM_targeted", "FGM"]
 
 
 def FGSM(net, x, y_true, data_params, attack_params, verbose=False):
@@ -87,6 +87,52 @@ def FGSM(net, x, y_true, data_params, attack_params, verbose=False):
 
     # Clipping perturbations so that  x_min < image + perturbation < x_max
     perturbation.data = clip(perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
+    return perturbation
+
+
+def FGM(net, x, y_true, verbose=False):
+    """
+    Description: Fast gradient method (without sign gives gradients as it is)
+        Goodfellow [https://arxiv.org/abs/1412.6572]
+    Input :
+        net : Neural Network                                        (torch.nn.Module)
+        x : Inputs to the net                                       (Batch)
+        y_true : Labels                                             (Batch)
+        data_params :                                               (dict)
+            x_min:  Minimum possible value of x (min pixel value)   (Float)
+            x_max:  Maximum possible value of x (max pixel value)   (Float)
+        attack_params : Attack parameters as a dictionary           (dict)
+        verbose: Check for gradient masking                         (Bool)
+    Output:
+        perturbation : Single step perturbation (Clamped with input limits)
+
+    Explanation:
+        e = epsilon * sign(grad_{x}(net(x)))
+    """
+    e = torch.zeros_like(x, requires_grad=True)  # perturbation
+
+    # Increase precision to prevent gradient masking
+    if x.device.type == "cuda":
+        y_hat = net(x + e).type(torch.cuda.DoubleTensor)
+    else:
+        y_hat = net(x + e)
+
+    # Loss computation
+    criterion = nn.CrossEntropyLoss(reduction="none")
+    loss = criterion(y_hat, y_true)
+
+    # Calculating backprop for images
+    loss.backward(gradient=torch.ones_like(y_true, dtype=torch.float), retain_graph=True)
+    e_grad = e.grad.data
+
+    if verbose:
+        # To make sure Gradient Masking is not happening
+        max_attack_for_each_image, _ = e_grad.abs().view(e.size(0), -1).max(dim=1)
+        if max_attack_for_each_image.min() <= 0:
+            warn("Gradient Masking is happening for some images!!!!!", GradientMaskingWarning)
+
+    perturbation = e_grad
+
     return perturbation
 
 

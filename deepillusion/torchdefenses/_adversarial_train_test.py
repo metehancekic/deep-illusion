@@ -68,7 +68,7 @@ def adversarial_epoch(model, train_loader, optimizer, scheduler=None, adversaria
     return train_loss/train_size, train_correct/train_size
 
 
-def adversarial_test(model, test_loader, adversarial_args=None, verbose=False):
+def adversarial_test(model, test_loader, adversarial_args=None, verbose=False, progress_bar=False):
     """
     Description: Evaluate model with test dataset,
         if adversarial args are present then adversarially perturbed test set.
@@ -80,6 +80,7 @@ def adversarial_test(model, test_loader, adversarial_args=None, verbose=False):
             attack_args:                     (dict)
                 attack arguments for given attack except "x" and "y_true"
         verbose: Verbosity                   (Bool)
+        progress_bar: Progress bar           (Bool)
     Output:
         train_loss : Train loss              (float)
         train_accuracy : Train accuracy      (float)
@@ -91,8 +92,11 @@ def adversarial_test(model, test_loader, adversarial_args=None, verbose=False):
 
     test_loss = 0
     test_correct = 0
-    if verbose:
-        iter_test_loader = tqdm(test_loader)
+    if progress_bar:
+        iter_test_loader = tqdm(
+            iterable=test_loader,
+            unit="batch",
+            leave=False)
     else:
         iter_test_loader = test_loader
 
