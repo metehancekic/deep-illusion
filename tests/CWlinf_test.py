@@ -51,7 +51,6 @@ elif args.dataset == "fashion":
         "ensemble_size": 10
         }
 
-attack_params["ensemble_size"] = 2
 
 data_params = {"x_min": 0., "x_max": 1.}
 
