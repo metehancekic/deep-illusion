@@ -35,10 +35,10 @@ def cw_single_step_grad(net, x, y_true, num_classes=10, verbose=False):
     else:
         y_hat = net(x + e)
 
-    y_true_onehot = to_one_hot(y_true, num_classes)
+    y_true_onehot = to_one_hot(y_true, num_classes).to(x.device)
 
     correct_logit = (y_true_onehot * y_hat).sum(dim=1)
-    wrong_logit = ((1 - y_true_onehot) * y_hat - 1e4 * y_true_onehot).max(dim=1)
+    wrong_logit = ((1 - y_true_onehot) * y_hat - 1e4 * y_true_onehot).max(dim=1)[0]
 
     loss = -nn.functional.relu(correct_logit - wrong_logit + 50)
 
@@ -83,10 +83,10 @@ def cw_single_step_sign(net, x, y_true, data_params, attack_params, num_classes=
     else:
         y_hat = net(x + e)
 
-    y_true_onehot = to_one_hot(y_true, num_classes)
+    y_true_onehot = to_one_hot(y_true, num_classes).to(x.device)
 
     correct_logit = (y_true_onehot * y_hat).sum(dim=1)
-    wrong_logit = ((1 - y_true_onehot) * y_hat - 1e4 * y_true_onehot).max(dim=1)
+    wrong_logit = ((1 - y_true_onehot) * y_hat - 1e4 * y_true_onehot).max(dim=1)[0]
 
     loss = -nn.functional.relu(correct_logit - wrong_logit + 50)
 
