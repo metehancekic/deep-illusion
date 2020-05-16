@@ -5,7 +5,7 @@ Torch Auxilary tools
 import torch
 import numpy as np
 
-__all__ = ["cross_entropy_one_hot", "clip"]
+__all__ = ["cross_entropy_one_hot", "clip", "to_one_hot"]
 
 
 def cross_entropy_one_hot(y_hat, y, reduction=None):
@@ -41,3 +41,17 @@ def clip(x, lower, upper):
         raise ValueError("lower and upper should be same type (float, int, torch.Tensor)")
 
     return x
+
+
+def to_one_hot(labels, num_classes):
+    """Embedding labels to one-hot form.
+
+    Args:
+      labels: (LongTensor) class labels, sized [N,].
+      num_classes: (int) number of classes.
+
+    Returns:
+      (tensor) encoded labels, sized [N, #classes].
+    """
+    y = torch.eye(num_classes)
+    return y[labels]
