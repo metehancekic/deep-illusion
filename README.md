@@ -15,10 +15,10 @@ To standardize the arguments for all attacks, methods accept attack parameters a
 Current version is tested with different defense methods and the standard models for verification and we observed the reported accuracies.
 
 Maintainers:
-    WCSL Lab, 
-    Metehan Cekic, 
-    Can Bakiskan, 
-    Soorya Gopalakrishnan
+    [WCSL Lab](https://wcsl.ece.ucsb.edu), 
+    [Metehan Cekic](https://www.ece.ucsb.edu/~metehancekic/), 
+    [Can Bakiskan](https://wcsl.ece.ucsb.edu/people/can-bakiskan), 
+    [Soorya Gopal](https://wcsl.ece.ucsb.edu/people/soorya-gopalakrishnan)
 
 
 ## Dependencies #
