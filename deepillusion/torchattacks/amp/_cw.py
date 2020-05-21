@@ -3,13 +3,13 @@ from warnings import warn
 import torch
 from torch import nn
 
-from .._utils import GradientMaskingWarning, GradientMaskingError
-from ._utils import clip, to_one_hot
+from ..._utils import GradientMaskingWarning, GradientMaskingError
+from .._utils import clip, to_one_hot
 
 __all__ = ["cw_single_step_grad", "cw_single_step_sign", "CWlinf", "CWlinf_e"]
 
 
-def cw_single_step_grad(net, x, y_true, num_classes=10, verbose=False):
+def cw_single_step_grad(net, x, y_true, num_classes=10, optimizer=None, verbose=False):
     """
     Description: Single Step
     Input :
@@ -42,8 +42,10 @@ def cw_single_step_grad(net, x, y_true, num_classes=10, verbose=False):
 
     loss = -nn.functional.relu(correct_logit - wrong_logit + 50)
 
-    # Calculating backprop for images
-    loss.backward(gradient=torch.ones_like(y_true, dtype=torch.float), retain_graph=True)
+    # Calculating backprop with amp for images
+    with amp.scale_loss(loss, optimizer) as scaled_loss:
+        scaled_loss.backward(gradient=torch.ones_like(
+            y_true, dtype=torch.float), retain_graph=True)
     e_grad = e.grad.data
 
     if verbose:
@@ -57,7 +59,7 @@ def cw_single_step_grad(net, x, y_true, num_classes=10, verbose=False):
     return perturbation
 
 
-def cw_single_step_sign(net, x, y_true, data_params, attack_params, num_classes=10, verbose=False):
+def cw_single_step_sign(net, x, y_true, data_params, attack_params, num_classes=10, optimizer=None, verbose=False):
     """
     Description: Single Step
     Input :
@@ -90,8 +92,10 @@ def cw_single_step_sign(net, x, y_true, data_params, attack_params, num_classes=
 
     loss = -nn.functional.relu(correct_logit - wrong_logit + 50)
 
-    # Calculating backprop for images
-    loss.backward(gradient=torch.ones_like(y_true, dtype=torch.float), retain_graph=True)
+    # Calculating backprop with amp for images
+    with amp.scale_loss(loss, optimizer) as scaled_loss:
+        scaled_loss.backward(gradient=torch.ones_like(
+            y_true, dtype=torch.float), retain_graph=True)
     e_grad = e.grad.data
 
     if verbose:
@@ -111,7 +115,7 @@ def cw_single_step_sign(net, x, y_true, data_params, attack_params, num_classes=
     return perturbation
 
 
-def CWlinf(net, x, y_true, data_params, attack_params, verbose=False, progress_bar=False):
+def CWlinf(net, x, y_true, data_params, attack_params, optimizer=None, verbose=False, progress_bar=False):
     """
     Description: Projected Gradient Descent
         Madry et al
@@ -186,6 +190,7 @@ def CWlinf(net, x, y_true, data_params, attack_params, verbose=False, progress_b
                                             data_params=data_params,
                                             attack_params={"norm": attack_params["norm"],
                                                            "eps": attack_params["step_size"]},
+                                            optimizer=optimizer,
                                             verbose=verbose)
             perturbation += cw_single_step_sign(**cw_single_step_sign_args)
 
@@ -214,7 +219,7 @@ def CWlinf(net, x, y_true, data_params, attack_params, verbose=False, progress_b
     return best_perturbation
 
 
-def CWlinf_e(net, x, y_true, data_params, attack_params, verbose=False, progress_bar=False):
+def CWlinf_e(net, x, y_true, data_params, attack_params, optimizer=None, verbose=False, progress_bar=False):
     """
     Description: Experctation Over Transformation
         EOT paper
@@ -291,6 +296,7 @@ def CWlinf_e(net, x, y_true, data_params, attack_params, verbose=False, progress
                                                           data_params["x_min"],
                                                           data_params["x_max"]),
                                             y_true=y_true,
+                                            optimizer=optimizer,
                                             verbose=verbose)
 
             # Adding progress bar for ensemble if progress_bar = True

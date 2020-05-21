@@ -161,7 +161,10 @@ def ePGD(net, x, y_true, data_params, attack_params, verbose=False, progress_bar
     Explanation:
         e = zeros() or e = uniform(-eps,eps)
         repeat num_steps:
-            e += delta * sign(grad_{x}(net(x)))
+            expected_grad = 0
+            repeat ensemble_size:
+                expected_grad += delta * sign(grad_{x}(net(x))) / ensemble_size
+            e += expected_grad 
     """
 
     # setting parameters.requires_grad = False increases speed
@@ -274,7 +277,10 @@ def PEGD(net, x, y_true, data_params, attack_params, verbose=False, progress_bar
     Explanation:
         e = zeros() or e = uniform(-eps,eps)
         repeat num_steps:
-            e += delta * sign(grad_{x}(net(x)))
+            expected_grad = 0
+            repeat ensemble_size:
+                expected_grad += grad_{x}(net(x)) / ||grad_{x}(net(x))||_2
+            e += delta * sign(expected_grad)
     """
 
     # setting parameters.requires_grad = False increases speed

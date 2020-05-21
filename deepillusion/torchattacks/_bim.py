@@ -44,12 +44,12 @@ def BIM(net, x, y_true, data_params, attack_params, verbose=False, progress_bar=
         verbose: check gradient masking                             (Bool)
         progress_bar: Put progress bar                              (Bool)
     Output:
-        perturbation : Perturbations for given batch
+        perturbation : Perturbations for given batch                (Batch)
 
     Explanation:
-        e = zeros() or e = uniform(-eps,eps)
+        e = zeros()
         repeat num_steps:
-            e += delta * sign(grad_{x}(net(x)))
+            e += delta * sign(grad_{x}(loss(net(x))))
     """
 
     # setting parameters.requires_grad = False increases speed
