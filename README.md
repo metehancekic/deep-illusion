@@ -116,8 +116,8 @@ deep-illusion
 |   |───torchdefenses
 │   |   |   _adversarial_train_test.py       Adversarial Training - Adversarial Testing
 |   |   │   
-|   |   |───amp
-|   |   |   │   _adversarial_train_test.py     Mixed Precision (Faster) - Adversarial Training - Adversarial Testing 
+|   |   └───amp
+|   |       │   _adversarial_train_test.py     Mixed Precision (Faster) - Adversarial Training - Adversarial Testing 
 |   |
 |   |───tfattacks
 |   |   |
