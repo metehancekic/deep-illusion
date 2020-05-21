@@ -15,9 +15,9 @@ To standardize the arguments for all attacks, methods accept attack parameters a
 Current version is tested with different defense methods and the standard models for verification and we observed the reported accuracies.
 
 Maintainers:
-    WCSL Lab
-    Metehan Cekic
-    Can Bakiskan
+    WCSL Lab, 
+    Metehan Cekic, 
+    Can Bakiskan, 
     Soorya Gopalakrishnan
 
 
