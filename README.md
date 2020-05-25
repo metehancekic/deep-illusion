@@ -20,11 +20,6 @@ We also include the most effective current approach to defend DNNs against adver
 
 Current version is tested with different defense methods and the standard models for verification and we observed the reported accuracies.
 
-Code can be installed via PyPi:
-```bash
-pip install deepillusion
-```
-
 Maintainers:
     [WCSL Lab](https://wcsl.ece.ucsb.edu), 
     [Metehan Cekic](https://www.ece.ucsb.edu/~metehancekic/), 
