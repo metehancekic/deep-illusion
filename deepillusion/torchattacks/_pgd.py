@@ -119,7 +119,11 @@ def PGD(net, x, y_true, data_params, attack_params, verbose=False, progress_bar=
 
         # Use the best perturbations among all restarts which fooled neural network
         if i == 0:
-            best_perturbation = perturbation.data
+            output = net(torch.clamp(x, data_params["x_min"], data_params["x_max"]))
+            y_hat = output.argmax(dim=1, keepdim=True)
+            incorrect_indices = (y_hat != y_true.view_as(y_hat)).nonzero()
+            best_perturbation[incorrect_indices] = perturbation[incorrect_indices].data
+            del incorrect_indices
         else:
             output = net(torch.clamp(x + perturbation, data_params["x_min"], data_params["x_max"]))
             y_hat = output.argmax(dim=1, keepdim=True)
@@ -235,7 +239,11 @@ def ePGD(net, x, y_true, data_params, attack_params, verbose=False, progress_bar
 
         # Use the best perturbations among all restarts which fooled neural network
         if i == 0:
-            best_perturbation = perturbation.data
+            output = net(torch.clamp(x, data_params["x_min"], data_params["x_max"]))
+            y_hat = output.argmax(dim=1, keepdim=True)
+            incorrect_indices = (y_hat != y_true.view_as(y_hat)).nonzero()
+            best_perturbation[incorrect_indices] = perturbation[incorrect_indices].data
+            del incorrect_indices
         else:
             output = net(torch.clamp(x + perturbation, data_params["x_min"], data_params["x_max"]))
             y_hat = output.argmax(dim=1, keepdim=True)
@@ -356,7 +364,11 @@ def PEGD(net, x, y_true, data_params, attack_params, verbose=False, progress_bar
 
         # Use the best perturbations among all restarts which fooled neural network
         if i == 0:
-            best_perturbation = perturbation.data
+            output = net(torch.clamp(x, data_params["x_min"], data_params["x_max"]))
+            y_hat = output.argmax(dim=1, keepdim=True)
+            incorrect_indices = (y_hat != y_true.view_as(y_hat)).nonzero()
+            best_perturbation[incorrect_indices] = perturbation[incorrect_indices].data
+            del incorrect_indices
         else:
             output = net(torch.clamp(x + perturbation, data_params["x_min"], data_params["x_max"]))
             y_hat = output.argmax(dim=1, keepdim=True)
