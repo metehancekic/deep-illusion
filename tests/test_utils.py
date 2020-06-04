@@ -46,7 +46,7 @@ def save_image(model, test_loader, attack_params, attack_args, attack_func="PGD"
     plt.savefig("perturb"+".pdf")
 
 
-def initiate_cifar10():
+def initiate_cifar10(random_model=False):
 
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
@@ -93,12 +93,20 @@ def initiate_cifar10():
     # show_images(images, labels)
 
     model = ResNet().to(device)
+    model_2 = ResNet().to(device)
+    if not random_model:
+        if not use_cuda:
+            model.load_state_dict(torch.load("checkpoints/cifar/ResNet.pt", map_location='cpu'))
+            model_2.load_state_dict(torch.load("checkpoints/cifar/ResNet.pt", map_location='cpu'))
+        else:
+            model.load_state_dict(torch.load("checkpoints/cifar/ResNet.pt"))
+            model_2.load_state_dict(torch.load("checkpoints/cifar/ResNet.pt"))
     model.load_state_dict(torch.load("checkpoints/ResNet.pt"))
     model.eval()
     test_loss, test_acc = test(model, test_loader)
     print(f'Clean \t loss: {test_loss:.4f} \t acc: {test_acc:.4f}')
 
-    return model, train_loader, test_loader
+    return model, model_2, train_loader, test_loader
 
 
 def initiate_mnist(dataset, random_model=False):
@@ -184,14 +192,16 @@ def initiate_mnist(dataset, random_model=False):
     model_2 = CNN().to(device)
     if not random_model:
         if not use_cuda:
-            model.load_state_dict(torch.load("checkpoints/CNN_adv_inf_0.3.pt", map_location='cpu'))
-            model_2.load_state_dict(torch.load("checkpoints/CNN.pt", map_location='cpu'))
+            model.load_state_dict(torch.load("checkpoints/" + dataset +
+                                             "/CNN_adv_inf_0.3.pt", map_location='cpu'))
+            model_2.load_state_dict(torch.load(
+                "checkpoints/" + dataset + "/CNN.pt", map_location='cpu'))
         else:
-            model.load_state_dict(torch.load("checkpoints/CNN_adv_inf_0.3.pt"))
-            model_2.load_state_dict(torch.load("checkpoints/CNN.pt"))
+            model.load_state_dict(torch.load("checkpoints/" + dataset + "/CNN_adv_inf_0.3.pt"))
+            model_2.load_state_dict(torch.load("checkpoints/" + dataset + "/CNN.pt"))
         # model.load_state_dict(torch.load("checkpoints/CNN.pt"))
-        test_loss, test_acc = test(model, test_loader)
         model.eval()
+        test_loss, test_acc = test(model, test_loader)
         print(f'Clean \t loss: {test_loss:.4f} \t acc: {test_acc:.4f}')
 
     return model, model_2, train_loader, test_loader
