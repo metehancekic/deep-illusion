@@ -181,14 +181,20 @@ def initiate_mnist(dataset, random_model=False):
     # show_images(images, labels)
 
     model = CNN().to(device)
+    model_2 = CNN().to(device)
     if not random_model:
-        model.load_state_dict(torch.load("checkpoints/CNN_adv_inf_0.3.pt"))
+        if not use_cuda:
+            model.load_state_dict(torch.load("checkpoints/CNN_adv_inf_0.3.pt", map_location='cpu'))
+            model_2.load_state_dict(torch.load("checkpoints/CNN.pt", map_location='cpu'))
+        else:
+            model.load_state_dict(torch.load("checkpoints/CNN_adv_inf_0.3.pt"))
+            model_2.load_state_dict(torch.load("checkpoints/CNN.pt"))
         # model.load_state_dict(torch.load("checkpoints/CNN.pt"))
         test_loss, test_acc = test(model, test_loader)
         model.eval()
         print(f'Clean \t loss: {test_loss:.4f} \t acc: {test_acc:.4f}')
 
-    return model, train_loader, test_loader
+    return model, model_2, train_loader, test_loader
 
 
 def test_adversarial(model, test_loader, attack_params, attack_args, attack_func="PGD"):
