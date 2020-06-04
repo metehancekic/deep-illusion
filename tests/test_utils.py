@@ -103,6 +103,7 @@ def initiate_cifar10(random_model=False):
             model_2.load_state_dict(torch.load("checkpoints/cifar/ResNet.pt"))
     model.load_state_dict(torch.load("checkpoints/ResNet.pt"))
     model.eval()
+    model_2.eval()
     test_loss, test_acc = test(model, test_loader)
     print(f'Clean \t loss: {test_loss:.4f} \t acc: {test_acc:.4f}')
 
@@ -201,6 +202,7 @@ def initiate_mnist(dataset, random_model=False):
             model_2.load_state_dict(torch.load("checkpoints/" + dataset + "/CNN.pt"))
         # model.load_state_dict(torch.load("checkpoints/CNN.pt"))
         model.eval()
+        model_2.eval()
         test_loss, test_acc = test(model, test_loader)
         print(f'Clean \t loss: {test_loss:.4f} \t acc: {test_acc:.4f}')
 

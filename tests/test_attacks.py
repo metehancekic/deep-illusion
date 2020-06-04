@@ -7,7 +7,7 @@ import time
 import argparse
 
 from deepillusion.torchattacks import FGSM, FGSM_targeted, RFGSM, PGD, PGD_EOT, PGD_EOT_normalized, PGD_EOT_sign, BIM, BIM_EOT, soft_attack_single_step, iterative_soft_attack
-from deepillusion.torchattacks.analysis import whitebox_test, substitute_test
+from deepillusion.torchattacks.analysis import whitebox_test, substitute_test, get_perturbation_stats
 
 from test_utils import initiate_cifar10, initiate_mnist
 
@@ -45,7 +45,7 @@ elif args.dataset == "mnist":
         "step_size": 0.01,
         "num_steps": 100,
         "random_start": False,
-        "num_restarts": 1,
+        "num_restarts": 10,
         "EOT_size": 20,
         }
 

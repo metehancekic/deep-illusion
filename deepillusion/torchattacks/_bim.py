@@ -22,6 +22,7 @@ from tqdm import tqdm
 import torch
 
 from ._fgsm import FGSM, FGM
+from ._utils import clip
 
 __all__ = ["BIM", "BIM_EOT"]
 
@@ -166,12 +167,7 @@ def BIM_EOT(net, x, y_true, data_params, attack_params, verbose=False, progress_
             perturbation = (perturbation * attack_params["eps"] /
                             perturbation.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1))
 
-        # Clip perturbation if surpassed the norm bounds
-        if attack_params["norm"] == "inf":
-            perturbation = torch.clamp(perturbation, -attack_params["eps"], attack_params["eps"])
-        else:
-            perturbation = (perturbation * attack_params["eps"] /
-                            perturbation.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1))
+        perturbation = clip(perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
 
     # set back to True
     for p in net.parameters():

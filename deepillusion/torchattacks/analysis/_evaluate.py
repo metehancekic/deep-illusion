@@ -96,6 +96,7 @@ def substitute_test(model, substitute_model, test_loader, adversarial_args, verb
     assert device == model.parameters().__next__().device, "Model and substitute_model should be on same device"
 
     model.eval()
+    substitute_model.eval()
 
     test_loss = 0
     test_correct = 0

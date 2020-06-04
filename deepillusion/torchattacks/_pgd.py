@@ -87,6 +87,7 @@ def PGD(net, x, y_true, data_params, attack_params, verbose=False, progress_bar=
                 perturbation = perturbation * attack_params["eps"] / \
                     perturbation.view(
                         x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1)
+            perturbation = clip(perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
 
         else:
             perturbation = torch.zeros_like(x, dtype=torch.float)
@@ -195,6 +196,7 @@ def PGD_EOT(net, x, y_true, data_params, attack_params, verbose=False, progress_
                 perturbation = perturbation * attack_params["eps"] / \
                     perturbation.view(
                         x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1)
+            perturbation = clip(perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
 
         else:
             perturbation = torch.zeros_like(x, dtype=torch.float)
@@ -211,8 +213,7 @@ def PGD_EOT(net, x, y_true, data_params, attack_params, verbose=False, progress_
 
         for _ in iters:
             fgm_args = dict(net=net,
-                            x=torch.clamp(x+perturbation,
-                                          data_params["x_min"], data_params["x_max"]),
+                            x=x+perturbation,
                             y_true=y_true,
                             verbose=verbose)
 
@@ -242,6 +243,8 @@ def PGD_EOT(net, x, y_true, data_params, attack_params, verbose=False, progress_
                 perturbation = (perturbation * attack_params["eps"] /
                                 perturbation.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1))
 
+            perturbation = clip(perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
+
         # Use the best perturbations among all restarts which fooled neural network
         if i == 0:
             best_perturbation = perturbation.data
@@ -256,8 +259,6 @@ def PGD_EOT(net, x, y_true, data_params, attack_params, verbose=False, progress_
     for p in net.parameters():
         p.requires_grad = True
 
-    best_perturbation.data = clip(
-        best_perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
     return best_perturbation
 
 
@@ -320,6 +321,7 @@ def PGD_EOT_normalized(net, x, y_true, data_params, attack_params, verbose=False
                 perturbation = perturbation * attack_params["eps"] / \
                     perturbation.view(
                         x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1)
+            perturbation = clip(perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
 
         else:
             perturbation = torch.zeros_like(x, dtype=torch.float)
@@ -367,6 +369,8 @@ def PGD_EOT_normalized(net, x, y_true, data_params, attack_params, verbose=False
                                  expected_grad.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1))
                 perturbation = (perturbation * attack_params["eps"] /
                                 perturbation.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1))
+
+            perturbation = clip(perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
 
         # Use the best perturbations among all restarts which fooled neural network
         if i == 0:
@@ -446,6 +450,7 @@ def PGD_EOT_sign(net, x, y_true, data_params, attack_params, verbose=False, prog
                 perturbation = perturbation * attack_params["eps"] / \
                     perturbation.view(
                         x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1)
+            perturbation = clip(perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
 
         else:
             perturbation = torch.zeros_like(x, dtype=torch.float)
@@ -488,6 +493,8 @@ def PGD_EOT_sign(net, x, y_true, data_params, attack_params, verbose=False, prog
             else:
                 perturbation = (perturbation * attack_params["eps"] /
                                 perturbation.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1))
+
+            perturbation = clip(perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
 
         # Use the best perturbations among all restarts which fooled neural network
         if i == 0:
