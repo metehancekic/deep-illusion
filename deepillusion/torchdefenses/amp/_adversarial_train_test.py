@@ -49,6 +49,7 @@ def adversarial_epoch(model, train_loader, optimizer, scheduler=None, adversaria
 
         # Adversary
         if adversarial_args and adversarial_args["attack"]:
+            adversarial_args["attack_args"]["net"] = model
             adversarial_args["attack_args"]["x"] = data
             adversarial_args["attack_args"]["y_true"] = target
             perturbs = adversarial_args['attack'](**adversarial_args["attack_args"])
@@ -97,7 +98,10 @@ def adversarial_test(model, test_loader, adversarial_args=None, verbose=False):
     test_loss = 0
     test_correct = 0
     if verbose:
-        iter_test_loader = tqdm(test_loader)
+        iter_test_loader = tqdm(
+            iterable=test_loader,
+            unit="batch",
+            leave=False)
     else:
         iter_test_loader = test_loader
 
@@ -106,6 +110,7 @@ def adversarial_test(model, test_loader, adversarial_args=None, verbose=False):
         data, target = data.to(device), target.to(device)
 
         if adversarial_args and adversarial_args["attack"]:
+            adversarial_args["attack_args"]["net"] = model
             adversarial_args["attack_args"]["x"] = data
             adversarial_args["attack_args"]["y_true"] = target
             perturbs = adversarial_args['attack'](**adversarial_args["attack_args"])
