@@ -65,10 +65,11 @@ def whitebox_test(model, test_loader, adversarial_args=None, verbose=False, prog
     test_size = len(test_loader.dataset)
 
     if verbose:
-        print("Attack Parameters:\n")
+        print("#------ATTACK PARAMETERS------#")
+        print("Attack Method: " + str(adversarial_args["attack"].__name__))
         for key in adversarial_args["attack_args"]["attack_params"]:
-            print(key + ': ' + str(adversarial_args["attack_args"]["attack_params"][key]))
-        print(f'Adversarial test \t loss: {test_loss/test_size:.4f} \t acc: {test_correct/test_size:.4f}\n')
+            print("\t" + key + ': ' + str(adversarial_args["attack_args"]["attack_params"][key]))
+        print(f'White-box test \t loss: {test_loss/test_size:.4f} \t acc: {test_correct/test_size:.4f}\n')
 
     return test_loss/test_size, test_correct/test_size
 
@@ -129,9 +130,10 @@ def substitute_test(model, substitute_model, test_loader, adversarial_args, verb
     test_size = len(test_loader.dataset)
 
     if verbose:
-        print("Attack Parameters:\n")
+        print("#------ATTACK PARAMETERS------#")
+        print("Attack Method: " + str(adversarial_args["attack"].__name__))
         for key in adversarial_args["attack_args"]["attack_params"]:
-            print(key + ': ' + str(adversarial_args["attack_args"]["attack_params"][key]))
-        print(f'Black Box test \t loss: {test_loss/test_size:.4f} \t acc: {test_correct/test_size:.4f}\n')
+            print("\t" + key + ': ' + str(adversarial_args["attack_args"]["attack_params"][key]))
+        print(f'Substitute model black-box test \t loss: {test_loss/test_size:.4f} \t acc: {test_correct/test_size:.4f}\n')
 
     return test_loss/test_size, test_correct/test_size

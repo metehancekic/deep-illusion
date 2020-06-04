@@ -1,7 +1,7 @@
 import time
 import argparse
 
-from deepillusion.torchattacks import FGSM, FGSM_targeted, RFGSM, PGD, ePGD, BIM, soft_attack_single_step, iterative_soft_attack
+from deepillusion.torchattacks import FGSM, FGSM_targeted, RFGSM, PGD, PGD_EOT, PGD_EOT_normalized, BIM, soft_attack_single_step, iterative_soft_attack
 
 from test_utils import initiate_cifar10, initiate_mnist, test_adversarial, save_image
 
@@ -27,7 +27,7 @@ if args.dataset == "cifar":
         "num_restarts": 1,
         }
 elif args.dataset == "mnist":
-    model, train_loader, test_loader = initiate_mnist(args.dataset)
+    model, model_2, train_loader, test_loader = initiate_mnist(args.dataset)
     attack_params = {
         "norm": "inf",
         "eps": 0.3,
@@ -59,7 +59,7 @@ attack_args = dict(net=model,
                    attack_params=attack_params,
                    verbose=False,
                    progress_bar=True)
-attack_func = PGD
+attack_func = PGD_EOT_normalized
 
 # save_image(model, test_loader, attack_params,
 #            attack_args=attack_args, attack_func=attack_func)
