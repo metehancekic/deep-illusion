@@ -13,7 +13,6 @@ deepillusion/jaxattacks/__init__.py
 deepillusion/tfattacks/__init__.py
 deepillusion/torchattacks/__init__.py
 deepillusion/torchattacks/_bim.py
-deepillusion/torchattacks/_cw.py
 deepillusion/torchattacks/_fgsm.py
 deepillusion/torchattacks/_pgd.py
 deepillusion/torchattacks/_rfgsm.py
