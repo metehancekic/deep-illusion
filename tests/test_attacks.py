@@ -22,7 +22,7 @@ parser.add_argument('--dataset', type=str, default='mnist', choices=[
 parser.add_argument('--attack_method', type=str, default='PGD', choices=[
                     "FGSM", "FGSM_targeted", "RFGSM", "BIM", "BIM_EOT", "PGD", "PGD_EOT", "PGD_EOT_normalized", "PGD_EOT_sign"], metavar='', help='Attack method')
 
-parser.add_argument('--loss_function', type=str, default='PGD', choices=[
+parser.add_argument('--loss_function', type=str, default='cross_entropy', choices=[
                     "cross_entropy", "carlini_wagner"], metavar='', help='Loss function to be used for attack')
 
 args = parser.parse_args()
@@ -82,7 +82,7 @@ attacks = dict(Standard=None,
 
 attack_args = dict(data_params=data_params,
                    attack_params=attack_params,
-                   loss_function="cross_en",
+                   loss_function=args.loss_function,
                    verbose=False)
 
 if args.attack_method not in ["FGSM", "FGSM_targeted", "RFGSM"]:
@@ -93,16 +93,16 @@ adversarial_args = dict(attack=attacks[args.attack_method],
 
 start_time = time.time()
 
-substitute_test_args = dict(model=model,
-                            substitute_model=model_2,
-                            test_loader=test_loader,
-                            adversarial_args=adversarial_args,
-                            verbose=True,
-                            progress_bar=True)
+# substitute_test_args = dict(model=model,
+#                             substitute_model=model_2,
+#                             test_loader=test_loader,
+#                             adversarial_args=adversarial_args,
+#                             verbose=True,
+#                             progress_bar=True)
 
-attack_loss, attack_acc = substitute_test(**substitute_test_args)
+# attack_loss, attack_acc = substitute_test(**substitute_test_args)
 
-whitebox_test_args = dict(model=model,
+whitebox_test_args = dict(model=model_2,
                           test_loader=test_loader,
                           adversarial_args=adversarial_args,
                           verbose=True,

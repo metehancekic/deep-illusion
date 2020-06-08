@@ -67,6 +67,7 @@ def whitebox_test(model, test_loader, adversarial_args=None, verbose=False, prog
     if verbose:
         print("#------ATTACK PARAMETERS------#")
         print("Attack Method: " + str(adversarial_args["attack"].__name__))
+        print("\t" + "Loss Function: " + str(adversarial_args["attack_args"]["loss_function"]))
         for key in adversarial_args["attack_args"]["attack_params"]:
             print("\t" + key + ': ' + str(adversarial_args["attack_args"]["attack_params"][key]))
         print(f'White-box test \t loss: {test_loss/test_size:.4f} \t acc: {test_correct/test_size:.4f}\n')
@@ -133,6 +134,7 @@ def substitute_test(model, substitute_model, test_loader, adversarial_args, verb
     if verbose:
         print("#------ATTACK PARAMETERS------#")
         print("Attack Method: " + str(adversarial_args["attack"].__name__))
+        print("\t" + "Loss Function: " + str(adversarial_args["attack_args"]["loss_function"]))
         for key in adversarial_args["attack_args"]["attack_params"]:
             print("\t" + key + ': ' + str(adversarial_args["attack_args"]["attack_params"][key]))
         print(f'Substitute model black-box test \t loss: {test_loss/test_size:.4f} \t acc: {test_correct/test_size:.4f}\n')

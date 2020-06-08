@@ -96,15 +96,17 @@ def initiate_cifar10(random_model=False):
     model_2 = ResNet().to(device)
     if not random_model:
         if not use_cuda:
-            model.load_state_dict(torch.load("checkpoints/cifar/ResNet.pt", map_location='cpu'))
-            model_2.load_state_dict(torch.load("checkpoints/cifar/ResNet.pt", map_location='cpu'))
+            model.load_state_dict(torch.load(
+                "checkpoints/cifar/resnet_NT_ep_100.pt", map_location='cpu'))
+            model_2.load_state_dict(torch.load(
+                "checkpoints/cifar/resnet_RFGSM_eps_8_a_10_ep_100.pt", map_location='cpu'))
         else:
-            model.load_state_dict(torch.load("checkpoints/cifar/ResNet.pt"))
-            model_2.load_state_dict(torch.load("checkpoints/cifar/ResNet.pt"))
-    model.load_state_dict(torch.load("checkpoints/ResNet.pt"))
+            model.load_state_dict(torch.load("checkpoints/cifar/resnet_NT_ep_100.pt"))
+            model_2.load_state_dict(torch.load(
+                "checkpoints/cifar/resnet_RFGSM_eps_8_a_10_ep_100.pt"))
     model.eval()
     model_2.eval()
-    test_loss, test_acc = test(model, test_loader)
+    test_loss, test_acc = test(model_2, test_loader)
     print(f'Clean \t loss: {test_loss:.4f} \t acc: {test_acc:.4f}')
 
     return model, model_2, train_loader, test_loader
