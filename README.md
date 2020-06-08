@@ -24,7 +24,8 @@ Maintainers:
     [WCSL Lab](https://wcsl.ece.ucsb.edu), 
     [Metehan Cekic](https://www.ece.ucsb.edu/~metehancekic/), 
     [Can Bakiskan](https://wcsl.ece.ucsb.edu/people/can-bakiskan), 
-    [Soorya Gopal](https://wcsl.ece.ucsb.edu/people/soorya-gopalakrishnan)
+    [Soorya Gopal](https://wcsl.ece.ucsb.edu/people/soorya-gopalakrishnan),
+    [Ahmet Dundar Sezer](https://wcsl.ece.ucsb.edu/people/ahmet-sezer) 
 
 
 ## Dependencies #
@@ -108,7 +109,7 @@ pip install deepillusion --upgrade
 ## Current Version #
 
 
-0.2.4
+0.2.5
 
 ## Module Structure #
 
