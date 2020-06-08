@@ -1,7 +1,4 @@
 """
-Authors: Metehan Cekic
-Date: 2020-03-09
-
 Description: Training and testing functions for neural models
 
 functions:
