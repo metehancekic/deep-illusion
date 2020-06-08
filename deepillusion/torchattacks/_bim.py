@@ -27,7 +27,7 @@ from ._utils import clip
 __all__ = ["BIM", "BIM_EOT"]
 
 
-def BIM(net, x, y_true, data_params, attack_params, verbose=False, progress_bar=False):
+def BIM(net, x, y_true, data_params, attack_params, loss_function="cross_entropy", verbose=False, progress_bar=False):
     """
     Description: Basic Iterative Method
     Input :
@@ -76,6 +76,7 @@ def BIM(net, x, y_true, data_params, attack_params, verbose=False, progress_bar=
                          data_params=data_params,
                          attack_params={"norm": attack_params["norm"],
                                         "eps": attack_params["step_size"]},
+                         loss_function=loss_function,
                          verbose=verbose)
         perturbation += FGSM(**fgsm_args)
 
@@ -93,7 +94,7 @@ def BIM(net, x, y_true, data_params, attack_params, verbose=False, progress_bar=
     return perturbation
 
 
-def BIM_EOT(net, x, y_true, data_params, attack_params, verbose=False, progress_bar=False):
+def BIM_EOT(net, x, y_true, data_params, attack_params, loss_function="cross_entropy", verbose=False, progress_bar=False):
     """
     Description: Basic Iterative Method
     Input :
@@ -140,6 +141,7 @@ def BIM_EOT(net, x, y_true, data_params, attack_params, verbose=False, progress_
                         x=torch.clamp(x+perturbation,
                                       data_params["x_min"], data_params["x_max"]),
                         y_true=y_true,
+                        loss_function=loss_function,
                         verbose=verbose)
         # Adding progress bar for ensemble if progress_bar = True
         if progress_bar:

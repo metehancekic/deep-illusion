@@ -31,12 +31,12 @@ from torch import nn
 from warnings import warn
 
 from .._utils import GradientMaskingWarning, GradientMaskingError
-from ._utils import clip
+from ._utils import clip, to_one_hot
 
 __all__ = ["FGSM", "FGSM_targeted", "FGM"]
 
 
-def FGSM(net, x, y_true, data_params, attack_params, verbose=False):
+def FGSM(net, x, y_true, data_params, attack_params, loss_function="cross_entropy", verbose=False):
     """
     Description: Fast gradient sign method
         Goodfellow [https://arxiv.org/abs/1412.6572]
@@ -66,8 +66,19 @@ def FGSM(net, x, y_true, data_params, attack_params, verbose=False):
         y_hat = net(x + e)
 
     # Loss computation
-    criterion = nn.CrossEntropyLoss(reduction="none")
-    loss = criterion(y_hat, y_true)
+    if loss_function == "cross_entropy":
+        criterion = nn.CrossEntropyLoss(reduction="none")
+        loss = criterion(y_hat, y_true)
+    elif loss_function == "carlini_wagner":
+        num_classes = y_hat.shape[-1]
+        y_true_onehot = to_one_hot(y_true, num_classes).to(x.device)
+
+        correct_logit = (y_true_onehot * y_hat).sum(dim=1)
+        wrong_logit = ((1 - y_true_onehot) * y_hat - 1e4 * y_true_onehot).max(dim=1)[0]
+
+        loss = -nn.functional.relu(correct_logit - wrong_logit + 50)
+    else:
+        raise NotImplementedError
 
     # Calculating backprop for images
     loss.backward(gradient=torch.ones_like(y_true, dtype=torch.float), retain_graph=True)
@@ -90,7 +101,7 @@ def FGSM(net, x, y_true, data_params, attack_params, verbose=False):
     return perturbation
 
 
-def FGM(net, x, y_true, verbose=False):
+def FGM(net, x, y_true, loss_function="cross_entropy",  verbose=False):
     """
     Description: Fast gradient method (without sign gives gradients as it is)
         Goodfellow [https://arxiv.org/abs/1412.6572]
@@ -118,8 +129,20 @@ def FGM(net, x, y_true, verbose=False):
         y_hat = net(x + e)
 
     # Loss computation
-    criterion = nn.CrossEntropyLoss(reduction="none")
-    loss = criterion(y_hat, y_true)
+    # Loss computation
+    if loss_function == "cross_entropy":
+        criterion = nn.CrossEntropyLoss(reduction="none")
+        loss = criterion(y_hat, y_true)
+    elif loss_function == "carlini_wagner":
+        num_classes = y_hat.shape[-1]
+        y_true_onehot = to_one_hot(y_true, num_classes).to(x.device)
+
+        correct_logit = (y_true_onehot * y_hat).sum(dim=1)
+        wrong_logit = ((1 - y_true_onehot) * y_hat - 1e4 * y_true_onehot).max(dim=1)[0]
+
+        loss = -nn.functional.relu(correct_logit - wrong_logit + 50)
+    else:
+        raise NotImplementedError
 
     # Calculating backprop for images
     loss.backward(gradient=torch.ones_like(y_true, dtype=torch.float), retain_graph=True)
@@ -136,7 +159,7 @@ def FGM(net, x, y_true, verbose=False):
     return perturbation
 
 
-def FGSM_targeted(net, x, y_target, data_params, attack_params, verbose=False):
+def FGSM_targeted(net, x, y_true, y_target, data_params, attack_params, loss_function="cross_entropy", verbose=False):
     """
     Description: Fast gradient sign method
         Goodfellow [https://arxiv.org/abs/1412.6572]
@@ -166,8 +189,20 @@ def FGSM_targeted(net, x, y_target, data_params, attack_params, verbose=False):
         y_hat = net(x + e)
 
     # Loss computation
-    criterion = nn.CrossEntropyLoss(reduction="none")
-    loss = criterion(y_hat, y_target)
+    # Loss computation
+    if loss_function == "cross_entropy":
+        criterion = nn.CrossEntropyLoss(reduction="none")
+        loss = criterion(y_hat, y_target)
+    elif loss_function == "carlini_wagner":
+        num_classes = y_hat.shape[-1]
+        y_true_onehot = to_one_hot(y_true, num_classes).to(x.device)
+
+        correct_logit = (y_true_onehot * y_hat).sum(dim=1)
+        target_logit = y_hat[:, y_target]
+
+        loss = -nn.functional.relu(correct_logit - target_logit + 50)
+    else:
+        raise NotImplementedError
 
     # Calculating backprop for images
     loss.backward(gradient=torch.ones_like(y_target, dtype=torch.float), retain_graph=True)

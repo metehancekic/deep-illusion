@@ -22,6 +22,9 @@ parser.add_argument('--dataset', type=str, default='mnist', choices=[
 parser.add_argument('--attack_method', type=str, default='PGD', choices=[
                     "FGSM", "FGSM_targeted", "RFGSM", "BIM", "BIM_EOT", "PGD", "PGD_EOT", "PGD_EOT_normalized", "PGD_EOT_sign"], metavar='', help='Attack method')
 
+parser.add_argument('--loss_function', type=str, default='PGD', choices=[
+                    "cross_entropy", "carlini_wagner"], metavar='', help='Loss function to be used for attack')
+
 args = parser.parse_args()
 
 if args.dataset == "cifar":
@@ -79,6 +82,7 @@ attacks = dict(Standard=None,
 
 attack_args = dict(data_params=data_params,
                    attack_params=attack_params,
+                   loss_function="cross_en",
                    verbose=False)
 
 if args.attack_method not in ["FGSM", "FGSM_targeted", "RFGSM"]:

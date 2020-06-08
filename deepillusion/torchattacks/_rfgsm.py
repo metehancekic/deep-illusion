@@ -19,12 +19,12 @@ from torch import nn
 from warnings import warn
 
 from .._utils import GradientMaskingWarning, GradientMaskingError
-from ._utils import clip
+from ._utils import clip, to_one_hot
 
 __all__ = ["RFGSM"]
 
 
-def RFGSM(net, x, y_true, data_params, attack_params, verbose=False):
+def RFGSM(net, x, y_true, data_params, attack_params, loss_function="cross_entropy", verbose=False):
     """
     Description: Random + Fast Gradient Sign Method
     Input :
@@ -61,8 +61,19 @@ def RFGSM(net, x, y_true, data_params, attack_params, verbose=False):
     y_hat = net(x + e)
 
     # Loss computation
-    criterion = nn.CrossEntropyLoss(reduction="none")
-    loss = criterion(y_hat, y_true)
+    if loss_function == "cross_entropy":
+        criterion = nn.CrossEntropyLoss(reduction="none")
+        loss = criterion(y_hat, y_true)
+    elif loss_function == "carlini_wagner":
+        num_classes = y_hat.shape[-1]
+        y_true_onehot = to_one_hot(y_true, num_classes).to(x.device)
+
+        correct_logit = (y_true_onehot * y_hat).sum(dim=1)
+        wrong_logit = ((1 - y_true_onehot) * y_hat - 1e4 * y_true_onehot).max(dim=1)[0]
+
+        loss = -nn.functional.relu(correct_logit - wrong_logit + 50)
+    else:
+        raise NotImplementedError
 
     # Calculating backprop for images
     loss.backward(gradient=torch.ones_like(y_true, dtype=torch.float), retain_graph=True)

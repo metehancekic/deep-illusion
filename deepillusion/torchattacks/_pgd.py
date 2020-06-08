@@ -31,7 +31,7 @@ from ._utils import clip
 __all__ = ["PGD", "PGD_EOT", "PGD_EOT_normalized", "PGD_EOT_sign"]
 
 
-def PGD(net, x, y_true, data_params, attack_params, verbose=False, progress_bar=False):
+def PGD(net, x, y_true, data_params, attack_params, loss_function="cross_entropy", verbose=False, progress_bar=False):
     """
     Description: Projected Gradient Descent
         Madry et al
@@ -109,6 +109,7 @@ def PGD(net, x, y_true, data_params, attack_params, verbose=False, progress_bar=
                              data_params=data_params,
                              attack_params={"norm": attack_params["norm"],
                                             "eps": attack_params["step_size"]},
+                             loss_function=loss_function,
                              verbose=verbose)
             perturbation += FGSM(**fgsm_args)
 
@@ -137,7 +138,7 @@ def PGD(net, x, y_true, data_params, attack_params, verbose=False, progress_bar=
     return best_perturbation
 
 
-def PGD_EOT(net, x, y_true, data_params, attack_params, verbose=False, progress_bar=False):
+def PGD_EOT(net, x, y_true, data_params, attack_params, loss_function="cross_entropy", verbose=False, progress_bar=False):
     """
     Description: Projected Gradient Descent with Expectation Over Transformation
         Expectation over gradients
@@ -215,6 +216,7 @@ def PGD_EOT(net, x, y_true, data_params, attack_params, verbose=False, progress_
             fgm_args = dict(net=net,
                             x=x+perturbation,
                             y_true=y_true,
+                            loss_function=loss_function,
                             verbose=verbose)
 
             # Adding progress bar for ensemble if progress_bar = True
@@ -262,7 +264,7 @@ def PGD_EOT(net, x, y_true, data_params, attack_params, verbose=False, progress_
     return best_perturbation
 
 
-def PGD_EOT_normalized(net, x, y_true, data_params, attack_params, verbose=False, progress_bar=False):
+def PGD_EOT_normalized(net, x, y_true, data_params, attack_params, loss_function="cross_entropy", verbose=False, progress_bar=False):
     """
     Description: Projected Gradient Descent with Expectation Over Transformation
         Expectation over normalized gradients
@@ -341,6 +343,7 @@ def PGD_EOT_normalized(net, x, y_true, data_params, attack_params, verbose=False
                             x=torch.clamp(x+perturbation,
                                           data_params["x_min"], data_params["x_max"]),
                             y_true=y_true,
+                            loss_function=loss_function,
                             verbose=verbose)
 
             # Adding progress bar for ensemble if progress_bar = True
@@ -391,7 +394,7 @@ def PGD_EOT_normalized(net, x, y_true, data_params, attack_params, verbose=False
     return best_perturbation
 
 
-def PGD_EOT_sign(net, x, y_true, data_params, attack_params, verbose=False, progress_bar=False):
+def PGD_EOT_sign(net, x, y_true, data_params, attack_params, loss_function="cross_entropy", verbose=False, progress_bar=False):
     """
     Description: Projected Gradient Descent with Expectation Over Signs
         EOT paper
@@ -472,6 +475,7 @@ def PGD_EOT_sign(net, x, y_true, data_params, attack_params, verbose=False, prog
                              data_params=data_params,
                              attack_params={"norm": attack_params["norm"],
                                             "eps": attack_params["step_size"]},
+                             loss_function=loss_function,
                              verbose=verbose)
 
             # Adding progress bar for ensemble if progress_bar = True
