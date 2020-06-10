@@ -108,6 +108,9 @@ from deepillusion.torchattacks import PGD, FGSM, RFGSM, BIM, PGD_EOT
 from deepillusion.torchattacks.analysis import whitebox_test, substitute_test
 
 ##### PGD ######
+data_params = dict(x_min= 0., 
+                   x_max=1.)
+                   
 attack_params = dict(norm="inf",
                      eps=0.3,
                      alpha=0.4,
@@ -116,6 +119,11 @@ attack_params = dict(norm="inf",
                      random_start=False,
                      num_restarts=1,
                      EOT_size=20)
+
+attack_args = dict(data_params=data_params,
+                   attack_params=attack_params,
+                   loss_function="cross_entropy",
+                   verbose=False)
 
 adversarial_args = dict(attack=PGD,
                         attack_args=attack_args)
