@@ -98,6 +98,60 @@ fgsm_args = dict(net=model,
 perturbs = FGSM(**fgsm_args)
 data_adversarial = data + perturbs
 ```
+
+Analysis tools come handy when one needs to evaluate his/her model against adversarial examples.
+Whitebox and blackbox test functions are inside analysis can be used as follow.
+
+
+```python
+from deepillusion.torchattacks import PGD, FGSM, RFGSM, BIM, PGD_EOT
+from deepillusion.torchattacks.analysis import whitebox_test, substitute_test
+
+##### PGD ######
+attack_params = dict(norm="inf",
+                     eps=0.3,
+                     alpha=0.4,
+                     step_size=0.01,
+                     num_steps=100,
+                     random_start=False,
+                     num_restarts=1,
+                     EOT_size=20)
+
+adversarial_args = dict(attack=PGD,
+                        attack_args=attack_args)
+
+whitebox_test_args = dict(model=model,
+                          test_loader=test_loader,
+                          adversarial_args=adversarial_args,
+                          verbose=True,
+                          progress_bar=True)
+
+attack_loss, attack_acc = whitebox_test(**whitebox_test_args)
+
+substitute_test_args = dict(model=model,
+                            substitute_model=another_model,
+                            test_loader=test_loader,
+                            adversarial_args=adversarial_args,
+                            verbose=True,
+                            progress_bar=True)
+
+attack_loss, attack_acc = substitute_test(**substitute_test_args)
+```
+
+Last but not least, you can check if the perturbations are legal by using get_perturbation_stats:
+
+```python
+from deepillusion.torchattacks.analysis import get_perturbation_stats
+
+get_perturbation_stats_args = dict(clean_data=clean_data, 
+                                   adversarial_data=adversarial_data, 
+                                   epsilon=epsilon, 
+                                   norm="inf", 
+                                   verbose=True)
+
+perturbation_properties = get_perturbation_stats(**get_perturbation_stats_args)
+```
+
 ## Update #
 
 Deepillusion is a growing and developing library, therefore we strongly recommend to upgrade deepillusion regularly:
@@ -109,7 +163,7 @@ pip install deepillusion --upgrade
 ## Current Version #
 
 
-0.2.6
+0.2.7
 
 ## Module Structure #
 
@@ -126,7 +180,6 @@ deep-illusion
 |   |   │   _fgsm.py                     Fast Gradient Sign Method
 |   |   │   _rfgsm.py                    Random Start + Fast Gradient Sign Method
 |   |   │   _pgd.py                      Projected Gradient Descent
-|   |   │   _cw.py                       Carlini Wagner Linf
 |   |   │   _bim.py                      Basic Iterative Method
 |   |   │   _soft_attacks.py             Soft attack functions
 |   |   │ 
@@ -139,6 +192,11 @@ deep-illusion
 |   |   |
 |   |   └───analysis
 |   |       │   _perturbation_statistics     Perturbations statistics functions
+|   |       │   _evaluate                    Whitebox, blackbox evaluations codes (test functions)
+|   |       │   
+|   |       └───plot 
+|   |           │   _loss_landscape.py       loss landscape plotter
+|   |           │   
 |   |
 |   |───torchdefenses
 │   |   |   _adversarial_train_test.py       Adversarial Training - Adversarial Testing
@@ -153,13 +211,7 @@ deep-illusion
 |       |
 |
 └───tests
-    |   fgsm_test.py
-    |   fgsmt_test.py
-    |   pgd_test.py
-    |   bim_test.py
-    |   rfgsm_test.py
-    |   cw_test.py
-    |   test_utils.py
+    |   test_....py                         Test functions
 
 ```
 ## Sources #
