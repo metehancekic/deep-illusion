@@ -106,8 +106,8 @@ def initiate_cifar10(random_model=False):
                 "checkpoints/cifar/resnet_RFGSM_eps_8_a_10_ep_100.pt"))
     model.eval()
     model_2.eval()
-    test_loss, test_acc = test(model_2, test_loader)
-    print(f'Clean \t loss: {test_loss:.4f} \t acc: {test_acc:.4f}')
+    # test_loss, test_acc = test(model, test_loader)
+    # print(f'Clean \t loss: {test_loss:.4f} \t acc: {test_acc:.4f}')
 
     return model, model_2, train_loader, test_loader
 
@@ -139,7 +139,7 @@ def initiate_mnist(dataset, random_model=False):
                 transform=transforms.Compose([transforms.ToTensor()]),
                 ),
             batch_size=10000,
-            shuffle=True,
+            shuffle=False,
             **kwargs
             )
 
@@ -164,7 +164,7 @@ def initiate_mnist(dataset, random_model=False):
                 transform=transforms.Compose([transforms.ToTensor()]),
                 ),
             batch_size=10000,
-            shuffle=True,
+            shuffle=False,
             **kwargs
             )
     classes = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
@@ -196,12 +196,12 @@ def initiate_mnist(dataset, random_model=False):
     if not random_model:
         if not use_cuda:
             model.load_state_dict(torch.load("checkpoints/" + dataset +
-                                             "/CNN_adv_inf_0.3.pt", map_location='cpu'))
+                                             "/CNN.pt", map_location='cpu'))
             model_2.load_state_dict(torch.load(
-                "checkpoints/" + dataset + "/CNN.pt", map_location='cpu'))
+                "checkpoints/" + dataset + "/CNN_adv_inf_0.3.pt", map_location='cpu'))
         else:
-            model.load_state_dict(torch.load("checkpoints/" + dataset + "/CNN_adv_inf_0.3.pt"))
-            model_2.load_state_dict(torch.load("checkpoints/" + dataset + "/CNN.pt"))
+            model.load_state_dict(torch.load("checkpoints/" + dataset + "/CNN.pt"))
+            model_2.load_state_dict(torch.load("checkpoints/" + dataset + "/CNN_adv_inf_0.3.pt"))
         # model.load_state_dict(torch.load("checkpoints/CNN.pt"))
         model.eval()
         model_2.eval()

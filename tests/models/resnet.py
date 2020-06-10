@@ -65,8 +65,8 @@ class ResNet(nn.Module):
         filters = [16, 16, 32, 64]
         strides = [1, 2, 2]
 
-        # self.norm = Normalize(mean=[0.4914, 0.4822, 0.4465], std=[
-        #     0.2471, 0.2435, 0.2616])
+        self.norm = Normalize(mean=[0.4914, 0.4822, 0.4465], std=[
+            0.2471, 0.2435, 0.2616])
 
         self.conv1 = nn.Conv2d(3, 16, kernel_size=3,
                                stride=1, padding=1, bias=False)
@@ -82,11 +82,6 @@ class ResNet(nn.Module):
 
         self.linear = nn.Linear(filters[-1], num_outputs)
 
-    def per_image_standardization(self, x):
-        x = x-x.mean(axis=(1, 2, 3), keepdim=True)
-        x = x/x.std(axis=(1, 2, 3), keepdim=True)
-        return x
-
     def build_block(self, unit, num_units, in_channel, out_channel, stride, activate_before_residual=False):
         layers = []
         layers.append(unit(in_channel, out_channel,
@@ -97,8 +92,7 @@ class ResNet(nn.Module):
 
     def forward(self, x):
 
-        out = self.per_image_standardization(x)
-        # out = self.norm(x)
+        out = self.norm(x)
         out = self.conv1(out)
         out = self.block1(out)
         out = self.block2(out)

@@ -109,7 +109,7 @@ pip install deepillusion --upgrade
 ## Current Version #
 
 
-0.2.5
+0.2.6
 
 ## Module Structure #
 

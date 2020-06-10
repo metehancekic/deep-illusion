@@ -65,6 +65,9 @@ def FGSM(net, x, y_true, data_params, attack_params, loss_function="cross_entrop
     else:
         y_hat = net(x + e)
 
+    # Overcome batch_size=1 error issue
+    y_hat = y_hat.view(-1, y_hat.shape[-1])
+
     # Loss computation
     if loss_function == "cross_entropy":
         criterion = nn.CrossEntropyLoss(reduction="none")
@@ -128,7 +131,9 @@ def FGM(net, x, y_true, loss_function="cross_entropy",  verbose=False):
     else:
         y_hat = net(x + e)
 
-    # Loss computation
+    # Overcome batch_size=1 error issue
+    y_hat = y_hat.view(-1, y_hat.shape[-1])
+
     # Loss computation
     if loss_function == "cross_entropy":
         criterion = nn.CrossEntropyLoss(reduction="none")
@@ -188,7 +193,9 @@ def FGSM_targeted(net, x, y_true, y_target, data_params, attack_params, loss_fun
     else:
         y_hat = net(x + e)
 
-    # Loss computation
+    # Overcome batch_size=1 error issue
+    y_hat = y_hat.view(-1, y_hat.shape[-1])
+
     # Loss computation
     if loss_function == "cross_entropy":
         criterion = nn.CrossEntropyLoss(reduction="none")
