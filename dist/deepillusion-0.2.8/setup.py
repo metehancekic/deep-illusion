@@ -13,7 +13,7 @@ release_tag = "v_" + str(version['version_info'][0]) + \
 setup(
     name='deepillusion',
     packages=['deepillusion', 'deepillusion.torchattacks', 'deepillusion.torchattacks.amp',
-              'deepillusion.torchattacks.analysis', 'deepillusion.torchattacks.analysis.plot', 'deepillusion.tfattacks', 'deepillusion.jaxattacks', 'deepillusion.torchdefenses', 'deepillusion.torchdefenses.amp'],
+              'deepillusion.torchattacks.analysis', 'deepillusion.tfattacks', 'deepillusion.jaxattacks', 'deepillusion.torchdefenses', 'deepillusion.torchdefenses.amp'],
     version=version['__version__'],
     license='MIT',
     description='Adversarial Machine Learning ToolBox',
