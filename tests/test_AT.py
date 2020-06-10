@@ -15,7 +15,7 @@ import torch.optim as optim
 from torch.optim.lr_scheduler import MultiStepLR
 
 
-from deepillusion.torchattacks import FGSM, FGSM_targeted, RFGSM, PGD, ensemble_PGD, BIM, soft_attack_single_step, iterative_soft_attack
+from deepillusion.torchattacks import FGSM, FGSM_targeted, RFGSM, PGD, PGD_EOT, PGD_EOT_normalized, PGD_EOT_sign, BIM
 from deepillusion.torchattacks.analysis import whitebox_test
 from deepillusion.torchdefenses import adversarial_epoch
 
@@ -42,7 +42,7 @@ parser.add_argument('--momentum', type=float, default=0.5,
 parser.add_argument('--weight_decay', type=float, default=0.0005,
                     metavar='WD', help='Weight decay (default: 0.0005)')
 
-parser.add_argument("-tra", "--tr_attack", type=str, default="RFGSM", metavar="rfgsm/pgd",
+parser.add_argument("-tra", "--tr_attack", type=str, default="FGSM", metavar="rfgsm/pgd",
                     help="Attack method")
 
 parser.add_argument('--attack_method', type=str, default='PGD', choices=[
@@ -76,7 +76,7 @@ elif args.dataset == "mnist":
         "step_size": 0.01,
         "num_steps": 40,
         "random_start": False,
-        "num_restarts": 10,
+        "num_restarts": 1,
         "EOT_size": 20,
         }
     epochs = 20

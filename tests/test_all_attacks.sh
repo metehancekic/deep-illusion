@@ -10,7 +10,7 @@
 
 #export CUDA_VISIBLE_DEVICES="1"
 
-dataset=cifar
+dataset=mnist
 loss_function=cross_entropy
 
 COMMAND="python test_attacks.py  \

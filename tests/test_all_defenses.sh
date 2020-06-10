@@ -15,7 +15,7 @@ loss_function=cross_entropy
 
 COMMAND="python test_AT.py  \
 --dataset=$dataset  \
---attack_method=FGSM  \
+--tr_attack=FGSM  \
 --loss_function=$loss_function" 
 echo $COMMAND
 eval $COMMAND
@@ -23,7 +23,7 @@ eval $COMMAND
 
 COMMAND="python test_AT.py  \
 --dataset=$dataset  \
---attack_method=RFGSM  \
+--tr_attack=RFGSM  \
 --loss_function=$loss_function"
 
 echo $COMMAND
@@ -31,7 +31,7 @@ eval $COMMAND
 
 COMMAND="python test_AT.py  \
 --dataset=$dataset  \
---attack_method=PGD  \
+--tr_attack=PGD  \
 --loss_function=$loss_function"  
 echo $COMMAND
 eval $COMMAND
