@@ -61,7 +61,9 @@ def PGD(net, x, y_true, data_params, attack_params, loss_function="cross_entropy
     """
 
     # setting parameters.requires_grad = False increases speed
-    for p in net.parameters():
+    requires_grad_save = [True]*len(list(net.parameters()))
+    for i, p in enumerate(net.parameters()):
+        requires_grad_save[i] = p.requires_grad
         p.requires_grad = False
 
     best_perturbation = torch.zeros_like(x)
@@ -81,13 +83,15 @@ def PGD(net, x, y_true, data_params, attack_params, loss_function="cross_entropy
         # Randomly initialize perturbation if needed
         if attack_params["random_start"] or attack_params["num_restarts"] > 1:
             if attack_params["norm"] == "inf":
-                perturbation = (2 * torch.rand_like(x) - 1) * attack_params["eps"]
+                perturbation = (2 * torch.rand_like(x) - 1) * \
+                    attack_params["eps"]
             else:
                 perturbation = 2 * torch.rand_like(x) - 1
                 perturbation = perturbation * attack_params["eps"] / \
                     perturbation.view(
                         x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1)
-            perturbation = clip(perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
+            perturbation = clip(
+                perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
 
         else:
             perturbation = torch.zeros_like(x, dtype=torch.float)
@@ -125,15 +129,16 @@ def PGD(net, x, y_true, data_params, attack_params, loss_function="cross_entropy
         if i == 0:
             best_perturbation = perturbation.data
         else:
-            output = net(torch.clamp(x + perturbation, data_params["x_min"], data_params["x_max"]))
+            output = net(torch.clamp(x + perturbation,
+                                     data_params["x_min"], data_params["x_max"]))
             y_hat = output.argmax(dim=1, keepdim=True)
 
             fooled_indices = (y_hat != y_true.view_as(y_hat)).nonzero()
             best_perturbation[fooled_indices] = perturbation[fooled_indices].data
 
-    # set back to True
-    for p in net.parameters():
-        p.requires_grad = True
+    # set back to saved values
+    for i, p in enumerate(net.parameters()):
+        p.requires_grad = requires_grad_save[i]
 
     return best_perturbation
 
@@ -172,7 +177,9 @@ def PGD_EOT(net, x, y_true, data_params, attack_params, loss_function="cross_ent
     """
 
     # setting parameters.requires_grad = False increases speed
-    for p in net.parameters():
+    requires_grad_save = [True]*len(list(net.parameters()))
+    for i, p in enumerate(net.parameters()):
+        requires_grad_save[i] = p.requires_grad
         p.requires_grad = False
 
     best_perturbation = torch.zeros_like(x)
@@ -191,13 +198,15 @@ def PGD_EOT(net, x, y_true, data_params, attack_params, loss_function="cross_ent
         # Randomly initialize perturbation if needed
         if attack_params["random_start"] or attack_params["num_restarts"] > 1:
             if attack_params["norm"] == "inf":
-                perturbation = (2 * torch.rand_like(x) - 1) * attack_params["eps"]
+                perturbation = (2 * torch.rand_like(x) - 1) * \
+                    attack_params["eps"]
             else:
                 perturbation = 2 * torch.rand_like(x) - 1
                 perturbation = perturbation * attack_params["eps"] / \
                     perturbation.view(
                         x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1)
-            perturbation = clip(perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
+            perturbation = clip(
+                perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
 
         else:
             perturbation = torch.zeros_like(x, dtype=torch.float)
@@ -236,7 +245,8 @@ def PGD_EOT(net, x, y_true, data_params, attack_params, loss_function="cross_ent
 
             # Clip perturbation if surpassed the norm bounds
             if attack_params["norm"] == "inf":
-                perturbation += attack_params["step_size"] * expected_grad.sign()
+                perturbation += attack_params["step_size"] * \
+                    expected_grad.sign()
                 perturbation = torch.clamp(
                     perturbation, -attack_params["eps"], attack_params["eps"])
             else:
@@ -245,21 +255,23 @@ def PGD_EOT(net, x, y_true, data_params, attack_params, loss_function="cross_ent
                 perturbation = (perturbation * attack_params["eps"] /
                                 perturbation.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1))
 
-            perturbation = clip(perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
+            perturbation = clip(
+                perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
 
         # Use the best perturbations among all restarts which fooled neural network
         if i == 0:
             best_perturbation = perturbation.data
         else:
-            output = net(torch.clamp(x + perturbation, data_params["x_min"], data_params["x_max"]))
+            output = net(torch.clamp(x + perturbation,
+                                     data_params["x_min"], data_params["x_max"]))
             y_hat = output.argmax(dim=1, keepdim=True)
 
             fooled_indices = (y_hat != y_true.view_as(y_hat)).nonzero()
             best_perturbation[fooled_indices] = perturbation[fooled_indices].data
 
-    # set back to True
-    for p in net.parameters():
-        p.requires_grad = True
+    # set back to saved values
+    for i, p in enumerate(net.parameters()):
+        p.requires_grad = requires_grad_save[i]
 
     return best_perturbation
 
@@ -298,7 +310,9 @@ def PGD_EOT_normalized(net, x, y_true, data_params, attack_params, loss_function
     """
 
     # setting parameters.requires_grad = False increases speed
-    for p in net.parameters():
+    requires_grad_save = [True]*len(list(net.parameters()))
+    for i, p in enumerate(net.parameters()):
+        requires_grad_save[i] = p.requires_grad
         p.requires_grad = False
 
     best_perturbation = torch.zeros_like(x)
@@ -317,13 +331,15 @@ def PGD_EOT_normalized(net, x, y_true, data_params, attack_params, loss_function
         # Randomly initialize perturbation if needed
         if attack_params["random_start"] or attack_params["num_restarts"] > 1:
             if attack_params["norm"] == "inf":
-                perturbation = (2 * torch.rand_like(x) - 1) * attack_params["eps"]
+                perturbation = (2 * torch.rand_like(x) - 1) * \
+                    attack_params["eps"]
             else:
                 perturbation = 2 * torch.rand_like(x) - 1
                 perturbation = perturbation * attack_params["eps"] / \
                     perturbation.view(
                         x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1)
-            perturbation = clip(perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
+            perturbation = clip(
+                perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
 
         else:
             perturbation = torch.zeros_like(x, dtype=torch.float)
@@ -359,12 +375,15 @@ def PGD_EOT_normalized(net, x, y_true, data_params, attack_params, loss_function
             expected_grad = 0
             for _ in ensemble:
                 e_grad = FGM(**fgm_args)
-                e_grad = e_grad / e_grad.view(x.shape[0], -1).norm(p=2, dim=-1).view(-1, 1, 1, 1)
+                e_grad = e_grad / \
+                    e_grad.view(x.shape[0], -1).norm(p=2,
+                                                     dim=-1).view(-1, 1, 1, 1)
                 expected_grad += e_grad
 
             # Clip perturbation if surpassed the norm bounds
             if attack_params["norm"] == "inf":
-                perturbation += attack_params["step_size"] * expected_grad.sign()
+                perturbation += attack_params["step_size"] * \
+                    expected_grad.sign()
                 perturbation = torch.clamp(
                     perturbation, -attack_params["eps"], attack_params["eps"])
             else:
@@ -373,21 +392,23 @@ def PGD_EOT_normalized(net, x, y_true, data_params, attack_params, loss_function
                 perturbation = (perturbation * attack_params["eps"] /
                                 perturbation.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1))
 
-            perturbation = clip(perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
+            perturbation = clip(
+                perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
 
         # Use the best perturbations among all restarts which fooled neural network
         if i == 0:
             best_perturbation = perturbation.data
         else:
-            output = net(torch.clamp(x + perturbation, data_params["x_min"], data_params["x_max"]))
+            output = net(torch.clamp(x + perturbation,
+                                     data_params["x_min"], data_params["x_max"]))
             y_hat = output.argmax(dim=1, keepdim=True)
 
             fooled_indices = (y_hat != y_true.view_as(y_hat)).nonzero()
             best_perturbation[fooled_indices] = perturbation[fooled_indices].data
 
-    # set back to True
-    for p in net.parameters():
-        p.requires_grad = True
+    # set back to saved values
+    for i, p in enumerate(net.parameters()):
+        p.requires_grad = requires_grad_save[i]
 
     best_perturbation.data = clip(
         best_perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
@@ -428,7 +449,9 @@ def PGD_EOT_sign(net, x, y_true, data_params, attack_params, loss_function="cros
     """
 
     # setting parameters.requires_grad = False increases speed
-    for p in net.parameters():
+    requires_grad_save = [True]*len(list(net.parameters()))
+    for i, p in enumerate(net.parameters()):
+        requires_grad_save[i] = p.requires_grad
         p.requires_grad = False
 
     best_perturbation = torch.zeros_like(x)
@@ -447,13 +470,15 @@ def PGD_EOT_sign(net, x, y_true, data_params, attack_params, loss_function="cros
         # Randomly initialize perturbation if needed
         if attack_params["random_start"] or attack_params["num_restarts"] > 1:
             if attack_params["norm"] == "inf":
-                perturbation = (2 * torch.rand_like(x) - 1) * attack_params["eps"]
+                perturbation = (2 * torch.rand_like(x) - 1) * \
+                    attack_params["eps"]
             else:
                 perturbation = 2 * torch.rand_like(x) - 1
                 perturbation = perturbation * attack_params["eps"] / \
                     perturbation.view(
                         x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1)
-            perturbation = clip(perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
+            perturbation = clip(
+                perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
 
         else:
             perturbation = torch.zeros_like(x, dtype=torch.float)
@@ -498,20 +523,22 @@ def PGD_EOT_sign(net, x, y_true, data_params, attack_params, loss_function="cros
                 perturbation = (perturbation * attack_params["eps"] /
                                 perturbation.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1))
 
-            perturbation = clip(perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
+            perturbation = clip(
+                perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
 
         # Use the best perturbations among all restarts which fooled neural network
         if i == 0:
             best_perturbation = perturbation.data
         else:
-            output = net(torch.clamp(x + perturbation, data_params["x_min"], data_params["x_max"]))
+            output = net(torch.clamp(x + perturbation,
+                                     data_params["x_min"], data_params["x_max"]))
             y_hat = output.argmax(dim=1, keepdim=True)
 
             fooled_indices = (y_hat != y_true.view_as(y_hat)).nonzero()
             best_perturbation[fooled_indices] = perturbation[fooled_indices].data
 
-    # set back to True
-    for p in net.parameters():
-        p.requires_grad = True
+    # set back to saved values
+    for i, p in enumerate(net.parameters()):
+        p.requires_grad = requires_grad_save[i]
 
     return best_perturbation
