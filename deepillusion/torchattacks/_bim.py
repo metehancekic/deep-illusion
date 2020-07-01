@@ -54,7 +54,9 @@ def BIM(net, x, y_true, data_params, attack_params, loss_function="cross_entropy
     """
 
     # setting parameters.requires_grad = False increases speed
-    for p in net.parameters():
+    requires_grad_save = [True]*len(list(net.parameters()))
+    for i, p in enumerate(net.parameters()):
+        requires_grad_save[i] = p.requires_grad
         p.requires_grad = False
 
     perturbation = torch.zeros_like(x, dtype=torch.float)
@@ -82,14 +84,15 @@ def BIM(net, x, y_true, data_params, attack_params, loss_function="cross_entropy
 
         # Clip perturbation if surpassed the norm bounds
         if attack_params["norm"] == "inf":
-            perturbation = torch.clamp(perturbation, -attack_params["eps"], attack_params["eps"])
+            perturbation = torch.clamp(
+                perturbation, -attack_params["eps"], attack_params["eps"])
         else:
             perturbation = (perturbation * attack_params["eps"] /
                             perturbation.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1))
 
-    # set back to True
-    for p in net.parameters():
-        p.requires_grad = True
+    # set back to saved values
+    for i, p in enumerate(net.parameters()):
+        p.requires_grad = requires_grad_save[i]
 
     return perturbation
 
@@ -121,7 +124,9 @@ def BIM_EOT(net, x, y_true, data_params, attack_params, loss_function="cross_ent
     """
 
     # setting parameters.requires_grad = False increases speed
-    for p in net.parameters():
+    requires_grad_save = [True]*len(list(net.parameters()))
+    for i, p in enumerate(net.parameters()):
+        requires_grad_save[i] = p.requires_grad
         p.requires_grad = False
 
     perturbation = torch.zeros_like(x, dtype=torch.float)
@@ -169,10 +174,11 @@ def BIM_EOT(net, x, y_true, data_params, attack_params, loss_function="cross_ent
             perturbation = (perturbation * attack_params["eps"] /
                             perturbation.view(x.shape[0], -1).norm(p=attack_params["norm"], dim=-1).view(-1, 1, 1, 1))
 
-        perturbation = clip(perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
+        perturbation = clip(
+            perturbation, data_params["x_min"] - x, data_params["x_max"] - x)
 
-    # set back to True
-    for p in net.parameters():
-        p.requires_grad = True
+    # set back to saved values
+    for i, p in enumerate(net.parameters()):
+        p.requires_grad = requires_grad_save[i]
 
     return perturbation
