@@ -122,7 +122,7 @@ def PGD(net, x, y_true, data_params, attack_params, verbose=False, progress_bar=
             output = net(torch.clamp(x + perturbation, data_params["x_min"], data_params["x_max"]))
             y_hat = output.argmax(dim=1, keepdim=True)
 
-            fooled_indices = (y_hat != y_true.view_as(y_hat)).nonzero()
+            fooled_indices = (y_true != y_hat.view_as(y_true)).nonzero().squeeze()
             best_perturbation[fooled_indices] = perturbation[fooled_indices].data
 
     # set back to True
@@ -234,7 +234,7 @@ def ePGD(net, x, y_true, data_params, attack_params, verbose=False, progress_bar
             output = net(torch.clamp(x + perturbation, data_params["x_min"], data_params["x_max"]))
             y_hat = output.argmax(dim=1, keepdim=True)
 
-            fooled_indices = (y_hat != y_true.view_as(y_hat)).nonzero()
+            fooled_indices = (y_true != y_hat.view_as(y_true)).nonzero().squeeze()
             best_perturbation[fooled_indices] = perturbation[fooled_indices].data
 
     # set back to True
@@ -352,7 +352,7 @@ def PEGD(net, x, y_true, data_params, attack_params, verbose=False, progress_bar
             output = net(torch.clamp(x + perturbation, data_params["x_min"], data_params["x_max"]))
             y_hat = output.argmax(dim=1, keepdim=True)
 
-            fooled_indices = (y_hat != y_true.view_as(y_hat)).nonzero()
+            fooled_indices = (y_true != y_hat.view_as(y_true)).nonzero().squeeze()
             best_perturbation[fooled_indices] = perturbation[fooled_indices].data
 
     # set back to True

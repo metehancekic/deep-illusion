@@ -133,7 +133,7 @@ def PGD(net, x, y_true, data_params, attack_params, loss_function="cross_entropy
                                      data_params["x_min"], data_params["x_max"]))
             y_hat = output.argmax(dim=1, keepdim=True)
 
-            fooled_indices = (y_hat != y_true.view_as(y_hat)).nonzero()
+            fooled_indices = (y_true != y_hat.view_as(y_true)).nonzero().squeeze()
             best_perturbation[fooled_indices] = perturbation[fooled_indices].data
 
     # set back to saved values
@@ -266,7 +266,7 @@ def PGD_EOT(net, x, y_true, data_params, attack_params, loss_function="cross_ent
                                      data_params["x_min"], data_params["x_max"]))
             y_hat = output.argmax(dim=1, keepdim=True)
 
-            fooled_indices = (y_hat != y_true.view_as(y_hat)).nonzero()
+            fooled_indices = (y_true != y_hat.view_as(y_true)).nonzero().squeeze()
             best_perturbation[fooled_indices] = perturbation[fooled_indices].data
 
     # set back to saved values
@@ -403,7 +403,7 @@ def PGD_EOT_normalized(net, x, y_true, data_params, attack_params, loss_function
                                      data_params["x_min"], data_params["x_max"]))
             y_hat = output.argmax(dim=1, keepdim=True)
 
-            fooled_indices = (y_hat != y_true.view_as(y_hat)).nonzero()
+            fooled_indices = (y_true != y_hat.view_as(y_true)).nonzero().squeeze()
             best_perturbation[fooled_indices] = perturbation[fooled_indices].data
 
     # set back to saved values
@@ -534,7 +534,7 @@ def PGD_EOT_sign(net, x, y_true, data_params, attack_params, loss_function="cros
                                      data_params["x_min"], data_params["x_max"]))
             y_hat = output.argmax(dim=1, keepdim=True)
 
-            fooled_indices = (y_hat != y_true.view_as(y_hat)).nonzero()
+            fooled_indices = (y_true != y_hat.view_as(y_true)).nonzero().squeeze()
             best_perturbation[fooled_indices] = perturbation[fooled_indices].data
 
     # set back to saved values

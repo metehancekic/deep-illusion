@@ -1,3 +1,8 @@
+from ..._fgsm import FGSM, FGM
+from . import _plot_settings
+import torch.nn as nn
+import torch
+import matplotlib.pyplot as plt
 """
 Adversarial Evaluation functions for Pytorch neural models  
 """
@@ -5,13 +10,9 @@ Adversarial Evaluation functions for Pytorch neural models
 from tqdm import tqdm
 from mpl_toolkits import mplot3d
 import numpy as np
-import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')
 
-import torch
-import torch.nn as nn
-
-from . import _plot_settings
-from ..._fgsm import FGSM, FGM
 
 __all__ = ["loss_landscape"]
 
