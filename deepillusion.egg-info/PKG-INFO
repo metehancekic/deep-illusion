@@ -1,12 +1,12 @@
 Metadata-Version: 2.1
 Name: deepillusion
-Version: 0.2.8
+Version: 0.3.0
 Summary: Adversarial Machine Learning ToolBox
 Home-page: https://github.com/metehancekic/deep-illusion.git
 Author: Metehan Cekic
 Author-email: metehancekic@ucsb.edu
 License: MIT
-Download-URL: https://github.com/metehancekic/deep-illusion/archive/v_028.tar.gz
+Download-URL: https://github.com/metehancekic/deep-illusion/archive/v_030.tar.gz
 Description: ![alt text][logo]
         
         [logo]: https://github.com/metehancekic/deep-illusion/blob/master/figs/confused-ai.png
