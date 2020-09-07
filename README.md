@@ -171,7 +171,7 @@ pip install deepillusion --upgrade
 ## Current Version #
 
 
-0.2.9
+0.3.2
 
 ## Module Structure #
 
@@ -207,10 +207,11 @@ deep-illusion
 |   |           │   
 |   |
 |   |───torchdefenses
-│   |   |   _adversarial_train_test.py       Adversarial Training - Adversarial Testing
+│   |   |   _adversarial_train.py       Adversarial Training - Adversarial Testing
+│   |   |   _trades_train.py            Trades Training - Trades Loss
 |   |   │   
 |   |   └───amp
-|   |       │   _adversarial_train_test.py     MP (Faster) - Adversarial Training - Adversarial Testing 
+|   |       │   _adversarial_train.py     MP (Faster) - Adversarial Training - Adversarial Testing 
 |   |
 |   |───tfattacks
 |   |   |
