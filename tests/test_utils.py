@@ -9,8 +9,7 @@ import torch.nn.functional as F
 import torch.nn as nn
 import torch
 
-from models.resnet import ResNet
-from models.lenet import CNN
+from models import ResNet, LeNet
 
 from deepillusion.torchattacks.analysis import get_perturbation_stats
 
@@ -59,7 +58,7 @@ def initiate_cifar10(random_model=False):
     trainset = datasets.CIFAR10(root='./data',
                                 train=True, download=True, transform=transform)
     train_loader = torch.utils.data.DataLoader(trainset,
-                                               batch_size=64,
+                                               batch_size=128,
                                                shuffle=True, **kwargs)
 
     testset = datasets.CIFAR10(root='./data',
@@ -191,8 +190,8 @@ def initiate_mnist(dataset, random_model=False):
     labels = [classes[i] for i in labels[:num_img_to_plot]]
     # show_images(images, labels)
 
-    model = CNN().to(device)
-    model_2 = CNN().to(device)
+    model = LeNet().to(device)
+    model_2 = LeNet().to(device)
     if not random_model:
         if not use_cuda:
             model.load_state_dict(torch.load("checkpoints/" + dataset +

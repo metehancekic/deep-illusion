@@ -10,8 +10,13 @@
 
 #export CUDA_VISIBLE_DEVICES="1"
 
-dataset=mnist
+dataset=cifar
 loss_function=cross_entropy
+
+COMMAND="python test_trades.py  \
+--dataset=$dataset"
+echo $COMMAND
+eval $COMMAND
 
 COMMAND="python test_AT.py  \
 --dataset=$dataset  \

@@ -14,5 +14,8 @@ from ..._utils import GradientMaskingWarning
 from warnings import warn
 warn("Using amp versions can cause gradient masking issue for overconfident models (i.e models for MNIST dataset)", GradientMaskingWarning)
 
+warn("Will not be updated")
+
+
 __all__ = ['FGSM', 'FGM', 'FGSM_targeted', 'RFGSM', 'PGD', 'ePGD', 'PEGD', "CWlinf",
            "CWlinf_e", 'BIM', 'soft_attack_single_step', 'iterative_soft_attack', '__version__']
