@@ -156,8 +156,8 @@ def save_adversarial_dataset(model, test_loader, folder_dir="./", adversarial_ar
             verbose: Verbosity                   (Bool)
             progress_bar: Progress bar           (Bool)
     Output:
-            train_loss : Train loss              (float)
-            train_accuracy : Train accuracy      (float)
+            test_loss : Train loss              (float)
+            test_accuracy : Train accuracy      (float)
     """
     import numpy as np
     device = model.parameters().__next__().device

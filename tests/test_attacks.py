@@ -6,7 +6,7 @@ python test_attacks.py --dataset=mnist --attack_method=PGD_EOT_normalized
 import time
 import argparse
 
-from deepillusion.torchattacks import FGSM, FGSM_targeted, RFGSM, PGD, PGD_EOT, PGD_EOT_normalized, PGD_EOT_sign, BIM, BIM_EOT, soft_attack_single_step, iterative_soft_attack
+from deepillusion.torchattacks import FGSM, FGSM_targeted, RFGSM, PGD, PGD_EOT, PGD_EOT_normalized, PGD_EOT_sign, BIM, BIM_EOT, soft_attack_single_step, iterative_soft_attack, SPSA
 from deepillusion.torchattacks.analysis import whitebox_test, substitute_test, get_perturbation_stats
 
 from test_utils import initiate_cifar10, initiate_mnist
@@ -20,7 +20,7 @@ parser.add_argument('--dataset', type=str, default='mnist', choices=[
                     "mnist", "fashion", "cifar"], metavar='mnist/fashion/cifar', help='Which dataset to use (default: mnist)')
 
 parser.add_argument('--attack_method', type=str, default='PGD', choices=[
-                    "FGSM", "FGSM_targeted", "RFGSM", "BIM", "BIM_EOT", "PGD", "PGD_EOT", "PGD_EOT_normalized", "PGD_EOT_sign"], metavar='', help='Attack method')
+                    "FGSM", "FGSM_targeted", "RFGSM", "BIM", "BIM_EOT", "PGD", "PGD_EOT", "PGD_EOT_normalized", "PGD_EOT_sign", "SPSA"], metavar='', help='Attack method')
 
 parser.add_argument('--loss_function', type=str, default='cross_entropy', choices=[
                     "cross_entropy", "carlini_wagner"], metavar='', help='Loss function to be used for attack')
@@ -34,7 +34,8 @@ if args.dataset == "cifar":
         "eps": 8./255,
         "alpha": 10./255,
         "step_size": 2./255,
-        "num_steps": 7,
+        "num_steps": 20,
+        "num_samples": 20,
         "random_start": False,
         "num_restarts": 1,
         "EOT_size": 20,
@@ -45,8 +46,9 @@ elif args.dataset == "mnist":
         "norm": "inf",
         "eps": 0.3,
         "alpha": 0.4,
-        "step_size": 0.01,
+        "step_size": 0.05,
         "num_steps": 100,
+        "num_samples": 100,
         "random_start": False,
         "num_restarts": 10,
         "EOT_size": 20,
@@ -60,6 +62,7 @@ elif args.dataset == "fashion":
         "alpha": 0.125,
         "step_size": 0.004,
         "num_steps": 100,
+        "num_samples": 10,
         "random_start": False,
         "num_restarts": 1,
         "EOT_size": 20,
@@ -68,6 +71,7 @@ elif args.dataset == "fashion":
 data_params = {"x_min": 0., "x_max": 1.}
 
 attacks = dict(Standard=None,
+               SPSA=SPSA,
                FGSM=FGSM,
                FGSM_targeted=FGSM_targeted,
                RFGSM=RFGSM,
@@ -90,6 +94,7 @@ if args.attack_method not in ["FGSM", "FGSM_targeted", "RFGSM"]:
 
 adversarial_args = dict(attack=attacks[args.attack_method],
                         attack_args=attack_args)
+# breakpoint()
 
 start_time = time.time()
 

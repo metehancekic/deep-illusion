@@ -61,9 +61,15 @@ def FGSM(net, x, y_true, data_params, attack_params, loss_function="cross_entrop
 
     # Increase precision to prevent gradient masking
     if x.device.type == "cuda":
-        y_hat = net(x + e).type(torch.cuda.DoubleTensor)
+        try:
+            y_hat = net(x + e).type(torch.cuda.DoubleTensor)
+        except:
+            y_hat = net(x + e)[0].type(torch.cuda.DoubleTensor)
     else:
-        y_hat = net(x + e)
+        try:
+            y_hat = net(x + e)
+        except:
+            y_hat = net(x + e)[0]
 
     # Overcome batch_size=1 error issue
     y_hat = y_hat.view(-1, y_hat.shape[-1])
