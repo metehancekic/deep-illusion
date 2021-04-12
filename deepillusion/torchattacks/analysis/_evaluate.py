@@ -51,7 +51,8 @@ def whitebox_test(model, test_loader, adversarial_args=None, verbose=False, prog
             adversarial_args["attack_args"]["net"] = model
             adversarial_args["attack_args"]["x"] = data
             adversarial_args["attack_args"]["y_true"] = target
-            perturbs = adversarial_args['attack'](**adversarial_args["attack_args"])
+            perturbs = adversarial_args['attack'](
+                **adversarial_args["attack_args"])
             data += perturbs
 
         output = model(data)
@@ -67,10 +68,13 @@ def whitebox_test(model, test_loader, adversarial_args=None, verbose=False, prog
     if verbose:
         print("#------ATTACK PARAMETERS------#")
         print("Attack Method: " + str(adversarial_args["attack"].__name__))
-        print("\t" + "Loss Function: " + str(adversarial_args["attack_args"]["loss_function"]))
+        print("\t" + "Loss Function: " +
+              str(adversarial_args["attack_args"]["loss_function"]))
         for key in adversarial_args["attack_args"]["attack_params"]:
-            print("\t" + key + ': ' + str(adversarial_args["attack_args"]["attack_params"][key]))
-        print(f'White-box test \t loss: {test_loss/test_size:.4f} \t acc: {test_correct/test_size:.4f}\n')
+            print("\t" + key + ': ' +
+                  str(adversarial_args["attack_args"]["attack_params"][key]))
+        print(
+            f'White-box test \t loss: {test_loss/test_size:.4f} \t acc: {test_correct/test_size:.4f}\n')
 
     return test_loss/test_size, test_correct/test_size
 
@@ -94,7 +98,8 @@ def substitute_test(model, substitute_model, test_loader, adversarial_args, verb
     """
 
     device = substitute_model.parameters().__next__().device
-    assert device == model.parameters().__next__().device, "Model and substitute_model should be on same device"
+    assert device == model.parameters().__next__(
+    ).device, "Model and substitute_model should be on same device"
 
     model.eval()
     substitute_model.eval()
@@ -118,7 +123,8 @@ def substitute_test(model, substitute_model, test_loader, adversarial_args, verb
             adversarial_args["attack_args"]["net"] = substitute_model
             adversarial_args["attack_args"]["x"] = data
             adversarial_args["attack_args"]["y_true"] = target
-            perturbs = adversarial_args['attack'](**adversarial_args["attack_args"])
+            perturbs = adversarial_args['attack'](
+                **adversarial_args["attack_args"])
             data += perturbs
 
         output = model(data)
@@ -134,10 +140,13 @@ def substitute_test(model, substitute_model, test_loader, adversarial_args, verb
     if verbose:
         print("#------ATTACK PARAMETERS------#")
         print("Attack Method: " + str(adversarial_args["attack"].__name__))
-        print("\t" + "Loss Function: " + str(adversarial_args["attack_args"]["loss_function"]))
+        print("\t" + "Loss Function: " +
+              str(adversarial_args["attack_args"]["loss_function"]))
         for key in adversarial_args["attack_args"]["attack_params"]:
-            print("\t" + key + ': ' + str(adversarial_args["attack_args"]["attack_params"][key]))
-        print(f'Substitute model black-box test \t loss: {test_loss/test_size:.4f} \t acc: {test_correct/test_size:.4f}\n')
+            print("\t" + key + ': ' +
+                  str(adversarial_args["attack_args"]["attack_params"][key]))
+        print(
+            f'Substitute model black-box test \t loss: {test_loss/test_size:.4f} \t acc: {test_correct/test_size:.4f}\n')
 
     return test_loss/test_size, test_correct/test_size
 
@@ -156,8 +165,8 @@ def save_adversarial_dataset(model, test_loader, folder_dir="./", adversarial_ar
             verbose: Verbosity                   (Bool)
             progress_bar: Progress bar           (Bool)
     Output:
-            test_loss : Train loss              (float)
-            test_accuracy : Train accuracy      (float)
+            test_loss : Test loss              (float)
+            test_accuracy : Test accuracy      (float)
     """
     import numpy as np
     device = model.parameters().__next__().device
@@ -190,7 +199,8 @@ def save_adversarial_dataset(model, test_loader, folder_dir="./", adversarial_ar
             adversarial_args["attack_args"]["net"] = model
             adversarial_args["attack_args"]["x"] = data
             adversarial_args["attack_args"]["y_true"] = target
-            perturbs = adversarial_args['attack'](**adversarial_args["attack_args"])
+            perturbs = adversarial_args['attack'](
+                **adversarial_args["attack_args"])
             # breakpoint()
             data_adv = data + perturbs
             # print(f"max data_adv: {data_adv.max()}")
@@ -222,9 +232,12 @@ def save_adversarial_dataset(model, test_loader, folder_dir="./", adversarial_ar
     if verbose:
         print("#------ATTACK PARAMETERS------#")
         print("Attack Method: " + str(adversarial_args["attack"].__name__))
-        print("\t" + "Loss Function: " + str(adversarial_args["attack_args"]["loss_function"]))
+        print("\t" + "Loss Function: " +
+              str(adversarial_args["attack_args"]["loss_function"]))
         for key in adversarial_args["attack_args"]["attack_params"]:
-            print("\t" + key + ': ' + str(adversarial_args["attack_args"]["attack_params"][key]))
-        print(f'White-box test \t loss: {test_loss/test_size:.4f} \t acc: {test_correct/test_size:.4f}\n')
+            print("\t" + key + ': ' +
+                  str(adversarial_args["attack_args"]["attack_params"][key]))
+        print(
+            f'White-box test \t loss: {test_loss/test_size:.4f} \t acc: {test_correct/test_size:.4f}\n')
 
     return test_loss/test_size, test_correct/test_size
